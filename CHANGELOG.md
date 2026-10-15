@@ -2,6 +2,12 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y [SemVer](https://semver.org/lang/es/).
 
+## [1.2.1] - 2026-10-15
+
+### Changed
+- README: la sección de alcance declara que no hay funcionalidades solicitadas sin completar y lista solo las limitaciones conocidas; se retira la lista de funcionalidades no solicitadas.
+- Presentación: la diapositiva 5 muestra solo los beneficios esperados (proceso actual frente al prototipo), sin siguientes pasos.
+
 ## [1.2.0] - 2026-10-15
 
 ### Added

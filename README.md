@@ -223,13 +223,14 @@ Lo verifican `backend/tests/test_muestra_real.py`, la colección de Postman y la
 - **Monorepo trunk-based** con Conventional Commits: un desarrollador y una entrega.
 - **Docker y CI son opcionales**: la ejecución oficial (`pip` + `npm`) no exige instalar nada más.
 
-## Funcionalidades no incluidas
+## Alcance
 
-- Persistencia, histórico de conciliaciones y exportación a Excel.
-- ReteIVA, ReteICA, bases en UVT y validación del NIT con dígito de verificación.
-- Asiento contable completo y CSV con coma decimal.
-- Paginación y procesamiento de archivos grandes en segundo plano.
-- Autenticación, HTTPS y despliegue en un entorno real.
+**Funcionalidades no completadas:** ninguna. Todo lo solicitado en el enunciado está implementado y probado.
+
+**Limitaciones conocidas**
+
+- Solo se acepta punto decimal en los montos (no `1.234,56`).
+- La contabilidad se valida con la representación simplificada del archivo de muestra (débito = crédito por línea), no como un asiento contable completo.
 
 ## Uso de inteligencia artificial
 
