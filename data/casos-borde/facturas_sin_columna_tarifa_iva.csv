@@ -1,0 +1,6 @@
+id_factura,nit_proveedor,fecha_factura,concepto,base_gravable,valor_iva,tarifa_retencion,valor_retencion,total_factura
+FAC-0001,900124907,2026-02-10,Consultoría profesional,4620000,0,0.04,184800,4435200
+FAC-0002,900821427,2026-03-15,Soporte técnico,3940000,748600,0.04,157600,4531000
+FAC-0003,900251590,2026-01-01,Consultoría profesional,660000,33000,0.0,0,693000
+FAC-0004,900471498,2026-01-02,Soporte técnico,3570000,178500,0.025,89250,3659250
+FAC-0005,900416513,2026-02-02,Servicios administrativos,4850000,242500,0.04,194000,4898500
