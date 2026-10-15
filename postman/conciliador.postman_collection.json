@@ -453,6 +453,198 @@
           "response": []
         },
         {
+          "name": "Excel renombrado como CSV (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "const cuerpo = pm.response.json();",
+                  "pm.test(\"Código de error FORMATO_NO_CSV\", () => pm.expect(cuerpo.codigo).to.eql(\"FORMATO_NO_CSV\"));",
+                  "pm.test(\"Mensaje en español para el usuario\", () => pm.expect(cuerpo.mensaje).to.be.a(\"string\").and.not.empty);",
+                  "pm.test(\"Sugiere guardarlo como CSV UTF-8\", () => pm.expect(cuerpo.mensaje).to.include(\"CSV UTF-8\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/conciliaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "conciliaciones"
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "facturas",
+                  "type": "file",
+                  "src": "data/casos-borde/facturas_excel_renombrado.csv"
+                },
+                {
+                  "key": "contabilidad",
+                  "type": "file",
+                  "src": "data/contabilidad.csv"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Archivo en UTF-16 (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "const cuerpo = pm.response.json();",
+                  "pm.test(\"Código de error CODIFICACION_NO_SOPORTADA\", () => pm.expect(cuerpo.codigo).to.eql(\"CODIFICACION_NO_SOPORTADA\"));",
+                  "pm.test(\"Mensaje en español para el usuario\", () => pm.expect(cuerpo.mensaje).to.be.a(\"string\").and.not.empty);",
+                  "pm.test(\"Explica el formato no admitido\", () => pm.expect(cuerpo.mensaje).to.include(\"UTF-16\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/conciliaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "conciliaciones"
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "facturas",
+                  "type": "file",
+                  "src": "data/casos-borde/facturas_utf16.csv"
+                },
+                {
+                  "key": "contabilidad",
+                  "type": "file",
+                  "src": "data/contabilidad.csv"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Archivo dañado con caracteres nulos (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "const cuerpo = pm.response.json();",
+                  "pm.test(\"Código de error ARCHIVO_DANADO\", () => pm.expect(cuerpo.codigo).to.eql(\"ARCHIVO_DANADO\"));",
+                  "pm.test(\"Mensaje en español para el usuario\", () => pm.expect(cuerpo.mensaje).to.be.a(\"string\").and.not.empty);",
+                  ""
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/conciliaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "conciliaciones"
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "facturas",
+                  "type": "file",
+                  "src": "data/casos-borde/facturas_danado.csv"
+                },
+                {
+                  "key": "contabilidad",
+                  "type": "file",
+                  "src": "data/contabilidad.csv"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Comilla sin cerrar (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "const cuerpo = pm.response.json();",
+                  "pm.test(\"Código de error ARCHIVO_INVALIDO\", () => pm.expect(cuerpo.codigo).to.eql(\"ARCHIVO_INVALIDO\"));",
+                  "pm.test(\"Mensaje en español para el usuario\", () => pm.expect(cuerpo.mensaje).to.be.a(\"string\").and.not.empty);",
+                  "pm.test(\"Indica la línea donde está la comilla\", () => pm.expect(cuerpo.mensaje).to.include(\"línea 4\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/conciliaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "conciliaciones"
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "facturas",
+                  "type": "file",
+                  "src": "data/casos-borde/facturas_comillas_sin_cerrar.csv"
+                },
+                {
+                  "key": "contabilidad",
+                  "type": "file",
+                  "src": "data/contabilidad.csv"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "Falta el archivo de contabilidad (422)",
           "event": [
             {
