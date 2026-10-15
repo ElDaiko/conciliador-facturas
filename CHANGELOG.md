@@ -2,6 +2,17 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y [SemVer](https://semver.org/lang/es/).
 
+## [1.4.0] - 2026-10-15
+
+### Added
+- Validación de archivos corruptos o errados con mensajes que explican cómo corregirlos: libros de Excel, ZIP o PDF renombrados como `.csv` (`FORMATO_NO_CSV`), archivos en UTF-16 (`CODIFICACION_NO_SOPORTADA`) y archivos con caracteres nulos (`ARCHIVO_DANADO`).
+- En el frontend, mensaje específico para hojas de cálculo (`.xlsx`, `.xls`, `.xlsm`, `.ods`).
+- Casos borde, pruebas de backend, escenario E2E y solicitudes de Postman para cada caso.
+- Declaración de IA: mejoras propuestas por el candidato.
+
+### Fixed
+- Un CSV con una comilla sin cerrar se procesaba parcialmente sin avisar; ahora se rechaza indicando la línea donde empieza el problema.
+
 ## [1.3.0] - 2026-10-15
 
 ### Changed
