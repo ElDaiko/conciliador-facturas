@@ -1,9 +1,14 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
 import { App } from './app';
 
 describe('App (estructura accesible)', () => {
   async function renderizar(): Promise<HTMLElement> {
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    });
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     return fixture.nativeElement as HTMLElement;
@@ -17,10 +22,9 @@ describe('App (estructura accesible)', () => {
     expect(html.querySelector('main#contenido')).not.toBeNull();
   });
 
-  it('tiene regiones de encabezado, contenido y pie', async () => {
+  it('tiene regiones de encabezado, contenido y pie con el aviso de identidad', async () => {
     const html = await renderizar();
     expect(html.querySelector('header')).not.toBeNull();
-    expect(html.querySelector('main')).not.toBeNull();
     expect(html.querySelector('footer')?.textContent).toContain(
       'Prototipo con identidad visual inspirada en Bancolombia; no es un producto oficial.',
     );

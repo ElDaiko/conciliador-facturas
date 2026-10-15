@@ -1,0 +1,1505 @@
+{
+  "resumen": {
+    "total_registros": 50,
+    "facturas_unicas": 48,
+    "correctas": 32,
+    "con_inconsistencia": 18,
+    "con_advertencias": 11,
+    "registros_contables": 50,
+    "por_causa": [
+      {
+        "codigo": "DUPLICADA",
+        "etiqueta": "Factura duplicada",
+        "tipo": "INCONSISTENCIA",
+        "cantidad": 4
+      },
+      {
+        "codigo": "SIN_CONTABILIZAR",
+        "etiqueta": "Sin registro contable",
+        "tipo": "INCONSISTENCIA",
+        "cantidad": 4
+      },
+      {
+        "codigo": "CAMPO_VACIO",
+        "etiqueta": "Campo obligatorio vacío",
+        "tipo": "INCONSISTENCIA",
+        "cantidad": 3
+      },
+      {
+        "codigo": "TOTAL_DIFERENTE",
+        "etiqueta": "Total no cuadra",
+        "tipo": "INCONSISTENCIA",
+        "cantidad": 3
+      },
+      {
+        "codigo": "ESTADO_NO_CONTABILIZADO",
+        "etiqueta": "Contabilización no está en firme",
+        "tipo": "INCONSISTENCIA",
+        "cantidad": 3
+      },
+      {
+        "codigo": "IVA_DIFERENTE",
+        "etiqueta": "IVA mal calculado",
+        "tipo": "INCONSISTENCIA",
+        "cantidad": 2
+      },
+      {
+        "codigo": "VALOR_CONTABLE_DIFERENTE",
+        "etiqueta": "Valor contabilizado diferente",
+        "tipo": "INCONSISTENCIA",
+        "cantidad": 2
+      },
+      {
+        "codigo": "LINEA_CONTABLE_EN_CERO",
+        "etiqueta": "Línea contable sin valor",
+        "tipo": "ADVERTENCIA",
+        "cantidad": 7
+      },
+      {
+        "codigo": "PERIODO_POSTERIOR",
+        "etiqueta": "Contabilizada en periodo posterior",
+        "tipo": "ADVERTENCIA",
+        "cantidad": 4
+      },
+      {
+        "codigo": "FECHA_CONTABLE_ANTERIOR",
+        "etiqueta": "Contabilizada antes de la fecha de factura",
+        "tipo": "ADVERTENCIA",
+        "cantidad": 1
+      }
+    ],
+    "monto_sin_contabilizar": "11521700.00",
+    "monto_no_en_firme": "5572350.00",
+    "monto_diferencias_calculo": "106500.00"
+  },
+  "detalle": [
+    {
+      "fila": 2,
+      "id_factura": "FAC-0001",
+      "nit_proveedor": "900124907",
+      "fecha_factura": "2026-02-10",
+      "concepto": "Consultoría profesional",
+      "base_gravable": "4620000.00",
+      "tarifa_iva": "0",
+      "valor_iva": "0.00",
+      "tarifa_retencion": "0.04",
+      "valor_retencion": "184800.00",
+      "total_factura": "4435200.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [
+        {
+          "codigo": "LINEA_CONTABLE_EN_CERO",
+          "etiqueta": "Línea contable sin valor",
+          "tipo": "ADVERTENCIA",
+          "detalle": "Línea contable sin valor (fila 46, cuenta 513595, centro de costo CC1001).",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        }
+      ],
+      "calculos": {
+        "iva_esperado": "0.00",
+        "retencion_esperada": "184800.00",
+        "total_esperado": "4435200.00",
+        "valor_contabilizado": "4435200.00"
+      }
+    },
+    {
+      "fila": 3,
+      "id_factura": "FAC-0002",
+      "nit_proveedor": "900821427",
+      "fecha_factura": "2026-03-15",
+      "concepto": "Soporte técnico",
+      "base_gravable": "3940000.00",
+      "tarifa_iva": "0.19",
+      "valor_iva": "748600.00",
+      "tarifa_retencion": "0.04",
+      "valor_retencion": "157600.00",
+      "total_factura": "4531000.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [
+        {
+          "codigo": "LINEA_CONTABLE_EN_CERO",
+          "etiqueta": "Línea contable sin valor",
+          "tipo": "ADVERTENCIA",
+          "detalle": "Línea contable sin valor (fila 47, cuenta 511010, centro de costo CC3001).",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        }
+      ],
+      "calculos": {
+        "iva_esperado": "748600.00",
+        "retencion_esperada": "157600.00",
+        "total_esperado": "4531000.00",
+        "valor_contabilizado": "4531000.00"
+      }
+    },
+    {
+      "fila": 4,
+      "id_factura": "FAC-0003",
+      "nit_proveedor": "900251590",
+      "fecha_factura": "2026-01-01",
+      "concepto": "Consultoría profesional",
+      "base_gravable": "660000.00",
+      "tarifa_iva": "0.05",
+      "valor_iva": "33000.00",
+      "tarifa_retencion": "0",
+      "valor_retencion": "0.00",
+      "total_factura": "693000.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [
+        {
+          "codigo": "LINEA_CONTABLE_EN_CERO",
+          "etiqueta": "Línea contable sin valor",
+          "tipo": "ADVERTENCIA",
+          "detalle": "Línea contable sin valor (fila 48, cuenta 511010, centro de costo CC2002).",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        }
+      ],
+      "calculos": {
+        "iva_esperado": "33000.00",
+        "retencion_esperada": "0.00",
+        "total_esperado": "693000.00",
+        "valor_contabilizado": "693000.00"
+      }
+    },
+    {
+      "fila": 5,
+      "id_factura": "FAC-0004",
+      "nit_proveedor": "900471498",
+      "fecha_factura": "2026-01-02",
+      "concepto": "Soporte técnico",
+      "base_gravable": "3570000.00",
+      "tarifa_iva": "0.05",
+      "valor_iva": "178500.00",
+      "tarifa_retencion": "0.025",
+      "valor_retencion": "89250.00",
+      "total_factura": "3659250.00",
+      "estado": "CON_INCONSISTENCIA",
+      "causas": [
+        {
+          "codigo": "DUPLICADA",
+          "etiqueta": "Factura duplicada",
+          "tipo": "INCONSISTENCIA",
+          "detalle": "El id FAC-0004 aparece 2 veces (filas 5, 50).",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        }
+      ],
+      "advertencias": [
+        {
+          "codigo": "LINEA_CONTABLE_EN_CERO",
+          "etiqueta": "Línea contable sin valor",
+          "tipo": "ADVERTENCIA",
+          "detalle": "Línea contable sin valor (fila 49, cuenta 512010, centro de costo CC1002).",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        }
+      ],
+      "calculos": {
+        "iva_esperado": "178500.00",
+        "retencion_esperada": "89250.00",
+        "total_esperado": "3659250.00",
+        "valor_contabilizado": "3659250.00"
+      }
+    },
+    {
+      "fila": 6,
+      "id_factura": "FAC-0005",
+      "nit_proveedor": "900416513",
+      "fecha_factura": "2026-02-02",
+      "concepto": "Servicios administrativos",
+      "base_gravable": "4850000.00",
+      "tarifa_iva": "0.05",
+      "valor_iva": "242500.00",
+      "tarifa_retencion": "0.04",
+      "valor_retencion": "194000.00",
+      "total_factura": "4898500.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [
+        {
+          "codigo": "LINEA_CONTABLE_EN_CERO",
+          "etiqueta": "Línea contable sin valor",
+          "tipo": "ADVERTENCIA",
+          "detalle": "Línea contable sin valor (fila 50, cuenta 519525, centro de costo CC2001).",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        }
+      ],
+      "calculos": {
+        "iva_esperado": "242500.00",
+        "retencion_esperada": "194000.00",
+        "total_esperado": "4898500.00",
+        "valor_contabilizado": "4898500.00"
+      }
+    },
+    {
+      "fila": 7,
+      "id_factura": "FAC-0006",
+      "nit_proveedor": "900782207",
+      "fecha_factura": "2026-03-07",
+      "concepto": "Consultoría profesional",
+      "base_gravable": "3800000.00",
+      "tarifa_iva": "0.05",
+      "valor_iva": "215000.00",
+      "tarifa_retencion": "0",
+      "valor_retencion": "0.00",
+      "total_factura": "3990000.00",
+      "estado": "CON_INCONSISTENCIA",
+      "causas": [
+        {
+          "codigo": "IVA_DIFERENTE",
+          "etiqueta": "IVA mal calculado",
+          "tipo": "INCONSISTENCIA",
+          "detalle": "IVA reportado $215.000; esperado $190.000 (base $3.800.000 × 5%).",
+          "valor_reportado": "215000.00",
+          "valor_esperado": "190000.00",
+          "diferencia": "25000.00"
+        }
+      ],
+      "advertencias": [
+        {
+          "codigo": "LINEA_CONTABLE_EN_CERO",
+          "etiqueta": "Línea contable sin valor",
+          "tipo": "ADVERTENCIA",
+          "detalle": "Línea contable sin valor (fila 51, cuenta 512010, centro de costo CC1002).",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        }
+      ],
+      "calculos": {
+        "iva_esperado": "190000.00",
+        "retencion_esperada": "0.00",
+        "total_esperado": "3990000.00",
+        "valor_contabilizado": "3990000.00"
+      }
+    },
+    {
+      "fila": 8,
+      "id_factura": "FAC-0007",
+      "nit_proveedor": "900584530",
+      "fecha_factura": "2026-03-10",
+      "concepto": "Compra de suministros",
+      "base_gravable": "1570000.00",
+      "tarifa_iva": "0.05",
+      "valor_iva": "78500.00",
+      "tarifa_retencion": "0.025",
+      "valor_retencion": "39250.00",
+      "total_factura": "1609250.00",
+      "estado": "CON_INCONSISTENCIA",
+      "causas": [
+        {
+          "codigo": "SIN_CONTABILIZAR",
+          "etiqueta": "Sin registro contable",
+          "tipo": "INCONSISTENCIA",
+          "detalle": "No existe registro contable para FAC-0007.",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        }
+      ],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "78500.00",
+        "retencion_esperada": "39250.00",
+        "total_esperado": "1609250.00",
+        "valor_contabilizado": null
+      }
+    },
+    {
+      "fila": 9,
+      "id_factura": "FAC-0008",
+      "nit_proveedor": "900919051",
+      "fecha_factura": "2026-03-24",
+      "concepto": "Compra de suministros",
+      "base_gravable": "220000.00",
+      "tarifa_iva": "0.19",
+      "valor_iva": "41800.00",
+      "tarifa_retencion": "0.035",
+      "valor_retencion": "7700.00",
+      "total_factura": "254100.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "41800.00",
+        "retencion_esperada": "7700.00",
+        "total_esperado": "254100.00",
+        "valor_contabilizado": "254100.00"
+      }
+    },
+    {
+      "fila": 10,
+      "id_factura": "FAC-0009",
+      "nit_proveedor": "900381202",
+      "fecha_factura": "2026-03-01",
+      "concepto": "Capacitación",
+      "base_gravable": "560000.00",
+      "tarifa_iva": "0.05",
+      "valor_iva": "28000.00",
+      "tarifa_retencion": "0.04",
+      "valor_retencion": "22400.00",
+      "total_factura": "615600.00",
+      "estado": "CON_INCONSISTENCIA",
+      "causas": [
+        {
+          "codigo": "TOTAL_DIFERENTE",
+          "etiqueta": "Total no cuadra",
+          "tipo": "INCONSISTENCIA",
+          "detalle": "Total reportado $615.600; esperado $565.600 (base + IVA − retención).",
+          "valor_reportado": "615600.00",
+          "valor_esperado": "565600.00",
+          "diferencia": "50000.00"
+        }
+      ],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "28000.00",
+        "retencion_esperada": "22400.00",
+        "total_esperado": "565600.00",
+        "valor_contabilizado": "615600.00"
+      }
+    },
+    {
+      "fila": 11,
+      "id_factura": "FAC-0010",
+      "nit_proveedor": "900909352",
+      "fecha_factura": "2026-01-15",
+      "concepto": "Capacitación",
+      "base_gravable": "2690000.00",
+      "tarifa_iva": "0.19",
+      "valor_iva": "511100.00",
+      "tarifa_retencion": "0.04",
+      "valor_retencion": "107600.00",
+      "total_factura": "3093500.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "511100.00",
+        "retencion_esperada": "107600.00",
+        "total_esperado": "3093500.00",
+        "valor_contabilizado": "3093500.00"
+      }
+    },
+    {
+      "fila": 12,
+      "id_factura": "FAC-0011",
+      "nit_proveedor": "900417489",
+      "fecha_factura": "2026-03-09",
+      "concepto": "Compra de suministros",
+      "base_gravable": "4420000.00",
+      "tarifa_iva": "0.05",
+      "valor_iva": "221000.00",
+      "tarifa_retencion": "0.04",
+      "valor_retencion": "176800.00",
+      "total_factura": "4464200.00",
+      "estado": "CON_INCONSISTENCIA",
+      "causas": [
+        {
+          "codigo": "ESTADO_NO_CONTABILIZADO",
+          "etiqueta": "Contabilización no está en firme",
+          "tipo": "INCONSISTENCIA",
+          "detalle": "Registro contable en estado 'Pendiente' (fila 11).",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        }
+      ],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "221000.00",
+        "retencion_esperada": "176800.00",
+        "total_esperado": "4464200.00",
+        "valor_contabilizado": "4464200.00"
+      }
+    },
+    {
+      "fila": 13,
+      "id_factura": "FAC-0012",
+      "nit_proveedor": "900537867",
+      "fecha_factura": "2026-03-08",
+      "concepto": "Servicios de tecnología",
+      "base_gravable": "3040000.00",
+      "tarifa_iva": "0",
+      "valor_iva": "0.00",
+      "tarifa_retencion": "0.025",
+      "valor_retencion": "76000.00",
+      "total_factura": "2964000.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "0.00",
+        "retencion_esperada": "76000.00",
+        "total_esperado": "2964000.00",
+        "valor_contabilizado": "2964000.00"
+      }
+    },
+    {
+      "fila": 14,
+      "id_factura": "FAC-0013",
+      "nit_proveedor": "",
+      "fecha_factura": "2026-01-07",
+      "concepto": "Consultoría profesional",
+      "base_gravable": "3770000.00",
+      "tarifa_iva": "0.19",
+      "valor_iva": "716300.00",
+      "tarifa_retencion": "0.04",
+      "valor_retencion": "150800.00",
+      "total_factura": "4335500.00",
+      "estado": "CON_INCONSISTENCIA",
+      "causas": [
+        {
+          "codigo": "CAMPO_VACIO",
+          "etiqueta": "Campo obligatorio vacío",
+          "tipo": "INCONSISTENCIA",
+          "detalle": "Campos vacíos: nit_proveedor.",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        }
+      ],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "716300.00",
+        "retencion_esperada": "150800.00",
+        "total_esperado": "4335500.00",
+        "valor_contabilizado": "4335500.00"
+      }
+    },
+    {
+      "fila": 15,
+      "id_factura": "FAC-0014",
+      "nit_proveedor": "900492874",
+      "fecha_factura": "2026-01-19",
+      "concepto": "Soporte técnico",
+      "base_gravable": "4620000.00",
+      "tarifa_iva": "0",
+      "valor_iva": "0.00",
+      "tarifa_retencion": "0",
+      "valor_retencion": "0.00",
+      "total_factura": "4620000.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "0.00",
+        "retencion_esperada": "0.00",
+        "total_esperado": "4620000.00",
+        "valor_contabilizado": "4620000.00"
+      }
+    },
+    {
+      "fila": 16,
+      "id_factura": "FAC-0015",
+      "nit_proveedor": "900657112",
+      "fecha_factura": "2026-03-31",
+      "concepto": "Soporte técnico",
+      "base_gravable": "3550000.00",
+      "tarifa_iva": "0.05",
+      "valor_iva": "177500.00",
+      "tarifa_retencion": "0.035",
+      "valor_retencion": "124250.00",
+      "total_factura": "3603250.00",
+      "estado": "CON_INCONSISTENCIA",
+      "causas": [
+        {
+          "codigo": "DUPLICADA",
+          "etiqueta": "Factura duplicada",
+          "tipo": "INCONSISTENCIA",
+          "detalle": "El id FAC-0015 aparece 2 veces (filas 16, 51).",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        }
+      ],
+      "advertencias": [
+        {
+          "codigo": "PERIODO_POSTERIOR",
+          "etiqueta": "Contabilizada en periodo posterior",
+          "tipo": "ADVERTENCIA",
+          "detalle": "Factura de 2026-03 contabilizada en 2026-04 (revisar corte contable).",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        }
+      ],
+      "calculos": {
+        "iva_esperado": "177500.00",
+        "retencion_esperada": "124250.00",
+        "total_esperado": "3603250.00",
+        "valor_contabilizado": "3603250.00"
+      }
+    },
+    {
+      "fila": 17,
+      "id_factura": "FAC-0016",
+      "nit_proveedor": "900586989",
+      "fecha_factura": "2026-02-21",
+      "concepto": "Compra de suministros",
+      "base_gravable": "2900000.00",
+      "tarifa_iva": "0.19",
+      "valor_iva": "551000.00",
+      "tarifa_retencion": "0.04",
+      "valor_retencion": "116000.00",
+      "total_factura": "3335000.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "551000.00",
+        "retencion_esperada": "116000.00",
+        "total_esperado": "3335000.00",
+        "valor_contabilizado": "3335000.00"
+      }
+    },
+    {
+      "fila": 18,
+      "id_factura": "FAC-0017",
+      "nit_proveedor": "900843993",
+      "fecha_factura": "2026-02-21",
+      "concepto": "Capacitación",
+      "base_gravable": "1130000.00",
+      "tarifa_iva": "0.05",
+      "valor_iva": "56500.00",
+      "tarifa_retencion": "0.035",
+      "valor_retencion": "39550.00",
+      "total_factura": "1146950.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "56500.00",
+        "retencion_esperada": "39550.00",
+        "total_esperado": "1146950.00",
+        "valor_contabilizado": "1146950.00"
+      }
+    },
+    {
+      "fila": 19,
+      "id_factura": "FAC-0018",
+      "nit_proveedor": "900009728",
+      "fecha_factura": "2026-01-05",
+      "concepto": "Arrendamiento",
+      "base_gravable": "3450000.00",
+      "tarifa_iva": "0.19",
+      "valor_iva": "645500.00",
+      "tarifa_retencion": "0.04",
+      "valor_retencion": "138000.00",
+      "total_factura": "3967500.00",
+      "estado": "CON_INCONSISTENCIA",
+      "causas": [
+        {
+          "codigo": "IVA_DIFERENTE",
+          "etiqueta": "IVA mal calculado",
+          "tipo": "INCONSISTENCIA",
+          "detalle": "IVA reportado $645.500; esperado $655.500 (base $3.450.000 × 19%).",
+          "valor_reportado": "645500.00",
+          "valor_esperado": "655500.00",
+          "diferencia": "-10000.00"
+        }
+      ],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "655500.00",
+        "retencion_esperada": "138000.00",
+        "total_esperado": "3967500.00",
+        "valor_contabilizado": "3967500.00"
+      }
+    },
+    {
+      "fila": 20,
+      "id_factura": "FAC-0019",
+      "nit_proveedor": "900842581",
+      "fecha_factura": "2026-03-08",
+      "concepto": "Soporte técnico",
+      "base_gravable": "1940000.00",
+      "tarifa_iva": "0",
+      "valor_iva": "0.00",
+      "tarifa_retencion": "0.035",
+      "valor_retencion": "67900.00",
+      "total_factura": "1872100.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "0.00",
+        "retencion_esperada": "67900.00",
+        "total_esperado": "1872100.00",
+        "valor_contabilizado": "1872100.00"
+      }
+    },
+    {
+      "fila": 21,
+      "id_factura": "FAC-0020",
+      "nit_proveedor": "900726294",
+      "fecha_factura": "2026-03-04",
+      "concepto": "Soporte técnico",
+      "base_gravable": "2710000.00",
+      "tarifa_iva": "0.05",
+      "valor_iva": "135500.00",
+      "tarifa_retencion": "0.04",
+      "valor_retencion": "108400.00",
+      "total_factura": "2737100.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "135500.00",
+        "retencion_esperada": "108400.00",
+        "total_esperado": "2737100.00",
+        "valor_contabilizado": "2737100.00"
+      }
+    },
+    {
+      "fila": 22,
+      "id_factura": "FAC-0021",
+      "nit_proveedor": "900584936",
+      "fecha_factura": "2026-03-26",
+      "concepto": "Servicios de tecnología",
+      "base_gravable": "4350000.00",
+      "tarifa_iva": "0.05",
+      "valor_iva": "217500.00",
+      "tarifa_retencion": "0.035",
+      "valor_retencion": "152250.00",
+      "total_factura": "4415250.00",
+      "estado": "CON_INCONSISTENCIA",
+      "causas": [
+        {
+          "codigo": "SIN_CONTABILIZAR",
+          "etiqueta": "Sin registro contable",
+          "tipo": "INCONSISTENCIA",
+          "detalle": "No existe registro contable para FAC-0021.",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        }
+      ],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "217500.00",
+        "retencion_esperada": "152250.00",
+        "total_esperado": "4415250.00",
+        "valor_contabilizado": null
+      }
+    },
+    {
+      "fila": 23,
+      "id_factura": "FAC-0022",
+      "nit_proveedor": "900479887",
+      "fecha_factura": "2026-01-13",
+      "concepto": "Soporte técnico",
+      "base_gravable": "3620000.00",
+      "tarifa_iva": "0.19",
+      "valor_iva": "687800.00",
+      "tarifa_retencion": "0.035",
+      "valor_retencion": "126700.00",
+      "total_factura": "4181100.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "687800.00",
+        "retencion_esperada": "126700.00",
+        "total_esperado": "4181100.00",
+        "valor_contabilizado": "4181100.00"
+      }
+    },
+    {
+      "fila": 24,
+      "id_factura": "FAC-0023",
+      "nit_proveedor": "900474922",
+      "fecha_factura": "2026-01-24",
+      "concepto": "Capacitación",
+      "base_gravable": "4410000.00",
+      "tarifa_iva": "0.19",
+      "valor_iva": "837900.00",
+      "tarifa_retencion": "0.04",
+      "valor_retencion": "176400.00",
+      "total_factura": "5051500.00",
+      "estado": "CON_INCONSISTENCIA",
+      "causas": [
+        {
+          "codigo": "TOTAL_DIFERENTE",
+          "etiqueta": "Total no cuadra",
+          "tipo": "INCONSISTENCIA",
+          "detalle": "Total reportado $5.051.500; esperado $5.071.500 (base + IVA − retención).",
+          "valor_reportado": "5051500.00",
+          "valor_esperado": "5071500.00",
+          "diferencia": "-20000.00"
+        }
+      ],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "837900.00",
+        "retencion_esperada": "176400.00",
+        "total_esperado": "5071500.00",
+        "valor_contabilizado": "5051500.00"
+      }
+    },
+    {
+      "fila": 25,
+      "id_factura": "FAC-0024",
+      "nit_proveedor": "900985806",
+      "fecha_factura": "2026-01-09",
+      "concepto": "Compra de suministros",
+      "base_gravable": "4720000.00",
+      "tarifa_iva": "0.05",
+      "valor_iva": "236000.00",
+      "tarifa_retencion": "0.035",
+      "valor_retencion": "165200.00",
+      "total_factura": "4790800.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "236000.00",
+        "retencion_esperada": "165200.00",
+        "total_esperado": "4790800.00",
+        "valor_contabilizado": "4790800.00"
+      }
+    },
+    {
+      "fila": 26,
+      "id_factura": "FAC-0025",
+      "nit_proveedor": "900101359",
+      "fecha_factura": "2026-01-25",
+      "concepto": "Capacitación",
+      "base_gravable": "840000.00",
+      "tarifa_iva": "0.05",
+      "valor_iva": "42000.00",
+      "tarifa_retencion": "0",
+      "valor_retencion": "0.00",
+      "total_factura": "882000.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "42000.00",
+        "retencion_esperada": "0.00",
+        "total_esperado": "882000.00",
+        "valor_contabilizado": "882000.00"
+      }
+    },
+    {
+      "fila": 27,
+      "id_factura": "FAC-0026",
+      "nit_proveedor": "900096646",
+      "fecha_factura": "2026-01-01",
+      "concepto": "Soporte técnico",
+      "base_gravable": "3070000.00",
+      "tarifa_iva": "0.19",
+      "valor_iva": "583300.00",
+      "tarifa_retencion": "0",
+      "valor_retencion": "0.00",
+      "total_factura": "3653300.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "583300.00",
+        "retencion_esperada": "0.00",
+        "total_esperado": "3653300.00",
+        "valor_contabilizado": "3653300.00"
+      }
+    },
+    {
+      "fila": 28,
+      "id_factura": "FAC-0027",
+      "nit_proveedor": "900639772",
+      "fecha_factura": "2026-01-26",
+      "concepto": "Mantenimiento de equipos",
+      "base_gravable": "710000.00",
+      "tarifa_iva": "0.19",
+      "valor_iva": "134900.00",
+      "tarifa_retencion": "0",
+      "valor_retencion": "0.00",
+      "total_factura": "844900.00",
+      "estado": "CON_INCONSISTENCIA",
+      "causas": [
+        {
+          "codigo": "ESTADO_NO_CONTABILIZADO",
+          "etiqueta": "Contabilización no está en firme",
+          "tipo": "INCONSISTENCIA",
+          "detalle": "Registro contable en estado 'Pendiente' (fila 26).",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        }
+      ],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "134900.00",
+        "retencion_esperada": "0.00",
+        "total_esperado": "844900.00",
+        "valor_contabilizado": "844900.00"
+      }
+    },
+    {
+      "fila": 29,
+      "id_factura": "FAC-0028",
+      "nit_proveedor": "900788378",
+      "fecha_factura": "2026-03-11",
+      "concepto": "Compra de suministros",
+      "base_gravable": "3520000.00",
+      "tarifa_iva": "0.19",
+      "valor_iva": "668800.00",
+      "tarifa_retencion": "0.035",
+      "valor_retencion": "123200.00",
+      "total_factura": "4065600.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "668800.00",
+        "retencion_esperada": "123200.00",
+        "total_esperado": "4065600.00",
+        "valor_contabilizado": "4065600.00"
+      }
+    },
+    {
+      "fila": 30,
+      "id_factura": "FAC-0029",
+      "nit_proveedor": "900162279",
+      "fecha_factura": "2026-01-01",
+      "concepto": "",
+      "base_gravable": "3500000.00",
+      "tarifa_iva": "0.19",
+      "valor_iva": "665000.00",
+      "tarifa_retencion": "0.04",
+      "valor_retencion": "140000.00",
+      "total_factura": "4025000.00",
+      "estado": "CON_INCONSISTENCIA",
+      "causas": [
+        {
+          "codigo": "CAMPO_VACIO",
+          "etiqueta": "Campo obligatorio vacío",
+          "tipo": "INCONSISTENCIA",
+          "detalle": "Campos vacíos: concepto.",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        }
+      ],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "665000.00",
+        "retencion_esperada": "140000.00",
+        "total_esperado": "4025000.00",
+        "valor_contabilizado": "4025000.00"
+      }
+    },
+    {
+      "fila": 31,
+      "id_factura": "FAC-0030",
+      "nit_proveedor": "900723263",
+      "fecha_factura": "2026-01-18",
+      "concepto": "Mantenimiento de equipos",
+      "base_gravable": "2520000.00",
+      "tarifa_iva": "0.19",
+      "valor_iva": "478800.00",
+      "tarifa_retencion": "0.025",
+      "valor_retencion": "63000.00",
+      "total_factura": "2935800.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "478800.00",
+        "retencion_esperada": "63000.00",
+        "total_esperado": "2935800.00",
+        "valor_contabilizado": "2935800.00"
+      }
+    },
+    {
+      "fila": 32,
+      "id_factura": "FAC-0031",
+      "nit_proveedor": "900627192",
+      "fecha_factura": "2026-03-30",
+      "concepto": "Compra de suministros",
+      "base_gravable": "530000.00",
+      "tarifa_iva": "0.05",
+      "valor_iva": "26500.00",
+      "tarifa_retencion": "0.025",
+      "valor_retencion": "13250.00",
+      "total_factura": "543250.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [
+        {
+          "codigo": "PERIODO_POSTERIOR",
+          "etiqueta": "Contabilizada en periodo posterior",
+          "tipo": "ADVERTENCIA",
+          "detalle": "Factura de 2026-03 contabilizada en 2026-04 (revisar corte contable).",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        }
+      ],
+      "calculos": {
+        "iva_esperado": "26500.00",
+        "retencion_esperada": "13250.00",
+        "total_esperado": "543250.00",
+        "valor_contabilizado": "543250.00"
+      }
+    },
+    {
+      "fila": 33,
+      "id_factura": "FAC-0032",
+      "nit_proveedor": "900980478",
+      "fecha_factura": "2026-01-18",
+      "concepto": "Compra de suministros",
+      "base_gravable": "2690000.00",
+      "tarifa_iva": "0.05",
+      "valor_iva": "134500.00",
+      "tarifa_retencion": "0.04",
+      "valor_retencion": "107600.00",
+      "total_factura": "2716900.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "134500.00",
+        "retencion_esperada": "107600.00",
+        "total_esperado": "2716900.00",
+        "valor_contabilizado": "2716900.00"
+      }
+    },
+    {
+      "fila": 34,
+      "id_factura": "FAC-0033",
+      "nit_proveedor": "900847245",
+      "fecha_factura": "2026-01-20",
+      "concepto": "Mantenimiento de equipos",
+      "base_gravable": "2020000.00",
+      "tarifa_iva": "0",
+      "valor_iva": "0.00",
+      "tarifa_retencion": "0",
+      "valor_retencion": "0.00",
+      "total_factura": "2020000.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "0.00",
+        "retencion_esperada": "0.00",
+        "total_esperado": "2020000.00",
+        "valor_contabilizado": "2020000.00"
+      }
+    },
+    {
+      "fila": 35,
+      "id_factura": "FAC-0034",
+      "nit_proveedor": "900408261",
+      "fecha_factura": "2026-01-10",
+      "concepto": "Servicios de tecnología",
+      "base_gravable": "4360000.00",
+      "tarifa_iva": "0.05",
+      "valor_iva": "218000.00",
+      "tarifa_retencion": "0.035",
+      "valor_retencion": "152600.00",
+      "total_factura": "4425400.00",
+      "estado": "CON_INCONSISTENCIA",
+      "causas": [
+        {
+          "codigo": "SIN_CONTABILIZAR",
+          "etiqueta": "Sin registro contable",
+          "tipo": "INCONSISTENCIA",
+          "detalle": "No existe registro contable para FAC-0034.",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        }
+      ],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "218000.00",
+        "retencion_esperada": "152600.00",
+        "total_esperado": "4425400.00",
+        "valor_contabilizado": null
+      }
+    },
+    {
+      "fila": 36,
+      "id_factura": "FAC-0035",
+      "nit_proveedor": "900979941",
+      "fecha_factura": "2026-01-04",
+      "concepto": "Servicios de tecnología",
+      "base_gravable": "2710000.00",
+      "tarifa_iva": "0.05",
+      "valor_iva": "135500.00",
+      "tarifa_retencion": "0.035",
+      "valor_retencion": "94850.00",
+      "total_factura": "2750650.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "135500.00",
+        "retencion_esperada": "94850.00",
+        "total_esperado": "2750650.00",
+        "valor_contabilizado": "2750650.00"
+      }
+    },
+    {
+      "fila": 37,
+      "id_factura": "FAC-0036",
+      "nit_proveedor": "900715962",
+      "fecha_factura": "2026-02-08",
+      "concepto": "Soporte técnico",
+      "base_gravable": "1760000.00",
+      "tarifa_iva": "0",
+      "valor_iva": "0.00",
+      "tarifa_retencion": "0.04",
+      "valor_retencion": "70400.00",
+      "total_factura": "1691100.00",
+      "estado": "CON_INCONSISTENCIA",
+      "causas": [
+        {
+          "codigo": "TOTAL_DIFERENTE",
+          "etiqueta": "Total no cuadra",
+          "tipo": "INCONSISTENCIA",
+          "detalle": "Total reportado $1.691.100; esperado $1.689.600 (base + IVA − retención).",
+          "valor_reportado": "1691100.00",
+          "valor_esperado": "1689600.00",
+          "diferencia": "1500.00"
+        }
+      ],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "0.00",
+        "retencion_esperada": "70400.00",
+        "total_esperado": "1689600.00",
+        "valor_contabilizado": "1691100.00"
+      }
+    },
+    {
+      "fila": 38,
+      "id_factura": "FAC-0037",
+      "nit_proveedor": "900994871",
+      "fecha_factura": "2026-03-01",
+      "concepto": "Arrendamiento",
+      "base_gravable": "880000.00",
+      "tarifa_iva": "0.19",
+      "valor_iva": "167200.00",
+      "tarifa_retencion": "0.025",
+      "valor_retencion": "22000.00",
+      "total_factura": "1025200.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "167200.00",
+        "retencion_esperada": "22000.00",
+        "total_esperado": "1025200.00",
+        "valor_contabilizado": "1025200.00"
+      }
+    },
+    {
+      "fila": 39,
+      "id_factura": "FAC-0038",
+      "nit_proveedor": "900454671",
+      "fecha_factura": "2026-03-21",
+      "concepto": "Servicios administrativos",
+      "base_gravable": "2440000.00",
+      "tarifa_iva": "0.19",
+      "valor_iva": "463600.00",
+      "tarifa_retencion": "0.025",
+      "valor_retencion": "61000.00",
+      "total_factura": "2842600.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "463600.00",
+        "retencion_esperada": "61000.00",
+        "total_esperado": "2842600.00",
+        "valor_contabilizado": "2842600.00"
+      }
+    },
+    {
+      "fila": 40,
+      "id_factura": "FAC-0039",
+      "nit_proveedor": "900711458",
+      "fecha_factura": "2026-01-09",
+      "concepto": "Capacitación",
+      "base_gravable": "270000.00",
+      "tarifa_iva": "0",
+      "valor_iva": "0.00",
+      "tarifa_retencion": "0.025",
+      "valor_retencion": "6750.00",
+      "total_factura": "263250.00",
+      "estado": "CON_INCONSISTENCIA",
+      "causas": [
+        {
+          "codigo": "ESTADO_NO_CONTABILIZADO",
+          "etiqueta": "Contabilización no está en firme",
+          "tipo": "INCONSISTENCIA",
+          "detalle": "Registro contable en estado 'Pendiente' (fila 37).",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        }
+      ],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "0.00",
+        "retencion_esperada": "6750.00",
+        "total_esperado": "263250.00",
+        "valor_contabilizado": "263250.00"
+      }
+    },
+    {
+      "fila": 41,
+      "id_factura": "FAC-0040",
+      "nit_proveedor": "900047435",
+      "fecha_factura": "2026-03-24",
+      "concepto": "Servicios de tecnología",
+      "base_gravable": "2410000.00",
+      "tarifa_iva": "0.19",
+      "valor_iva": "457900.00",
+      "tarifa_retencion": "0.025",
+      "valor_retencion": "60250.00",
+      "total_factura": "2807650.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "457900.00",
+        "retencion_esperada": "60250.00",
+        "total_esperado": "2807650.00",
+        "valor_contabilizado": "2807650.00"
+      }
+    },
+    {
+      "fila": 42,
+      "id_factura": "FAC-0041",
+      "nit_proveedor": "900507344",
+      "fecha_factura": "2026-03-28",
+      "concepto": "Servicios de tecnología",
+      "base_gravable": "760000.00",
+      "tarifa_iva": "0.19",
+      "valor_iva": "144400.00",
+      "tarifa_retencion": "0.025",
+      "valor_retencion": "19000.00",
+      "total_factura": "885400.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "144400.00",
+        "retencion_esperada": "19000.00",
+        "total_esperado": "885400.00",
+        "valor_contabilizado": "885400.00"
+      }
+    },
+    {
+      "fila": 43,
+      "id_factura": "FAC-0042",
+      "nit_proveedor": "900823561",
+      "fecha_factura": null,
+      "concepto": "Arrendamiento",
+      "base_gravable": "920000.00",
+      "tarifa_iva": "0.19",
+      "valor_iva": "174800.00",
+      "tarifa_retencion": "0.025",
+      "valor_retencion": "23000.00",
+      "total_factura": "1071800.00",
+      "estado": "CON_INCONSISTENCIA",
+      "causas": [
+        {
+          "codigo": "CAMPO_VACIO",
+          "etiqueta": "Campo obligatorio vacío",
+          "tipo": "INCONSISTENCIA",
+          "detalle": "Campos vacíos: fecha_factura.",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        },
+        {
+          "codigo": "SIN_CONTABILIZAR",
+          "etiqueta": "Sin registro contable",
+          "tipo": "INCONSISTENCIA",
+          "detalle": "No existe registro contable para FAC-0042.",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        }
+      ],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "174800.00",
+        "retencion_esperada": "23000.00",
+        "total_esperado": "1071800.00",
+        "valor_contabilizado": null
+      }
+    },
+    {
+      "fila": 44,
+      "id_factura": "FAC-0043",
+      "nit_proveedor": "900408915",
+      "fecha_factura": "2026-02-04",
+      "concepto": "Capacitación",
+      "base_gravable": "2820000.00",
+      "tarifa_iva": "0.05",
+      "valor_iva": "141000.00",
+      "tarifa_retencion": "0",
+      "valor_retencion": "0.00",
+      "total_factura": "2961000.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "141000.00",
+        "retencion_esperada": "0.00",
+        "total_esperado": "2961000.00",
+        "valor_contabilizado": "2961000.00"
+      }
+    },
+    {
+      "fila": 45,
+      "id_factura": "FAC-0044",
+      "nit_proveedor": "900401799",
+      "fecha_factura": "2026-02-09",
+      "concepto": "Arrendamiento",
+      "base_gravable": "1860000.00",
+      "tarifa_iva": "0",
+      "valor_iva": "0.00",
+      "tarifa_retencion": "0.035",
+      "valor_retencion": "65100.00",
+      "total_factura": "1794900.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "0.00",
+        "retencion_esperada": "65100.00",
+        "total_esperado": "1794900.00",
+        "valor_contabilizado": "1794900.00"
+      }
+    },
+    {
+      "fila": 46,
+      "id_factura": "FAC-0045",
+      "nit_proveedor": "900486451",
+      "fecha_factura": "2026-03-05",
+      "concepto": "Capacitación",
+      "base_gravable": "1570000.00",
+      "tarifa_iva": "0.05",
+      "valor_iva": "78500.00",
+      "tarifa_retencion": "0.025",
+      "valor_retencion": "39250.00",
+      "total_factura": "1609250.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "78500.00",
+        "retencion_esperada": "39250.00",
+        "total_esperado": "1609250.00",
+        "valor_contabilizado": "1609250.00"
+      }
+    },
+    {
+      "fila": 47,
+      "id_factura": "FAC-0046",
+      "nit_proveedor": "900341615",
+      "fecha_factura": "2026-03-08",
+      "concepto": "Soporte técnico",
+      "base_gravable": "2370000.00",
+      "tarifa_iva": "0",
+      "valor_iva": "0.00",
+      "tarifa_retencion": "0.035",
+      "valor_retencion": "82950.00",
+      "total_factura": "2287050.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "0.00",
+        "retencion_esperada": "82950.00",
+        "total_esperado": "2287050.00",
+        "valor_contabilizado": "2287050.00"
+      }
+    },
+    {
+      "fila": 48,
+      "id_factura": "FAC-0047",
+      "nit_proveedor": "900855798",
+      "fecha_factura": "2026-01-13",
+      "concepto": "Mantenimiento de equipos",
+      "base_gravable": "1280000.00",
+      "tarifa_iva": "0",
+      "valor_iva": "0.00",
+      "tarifa_retencion": "0",
+      "valor_retencion": "0.00",
+      "total_factura": "1280000.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [],
+      "calculos": {
+        "iva_esperado": "0.00",
+        "retencion_esperada": "0.00",
+        "total_esperado": "1280000.00",
+        "valor_contabilizado": "1280000.00"
+      }
+    },
+    {
+      "fila": 49,
+      "id_factura": "FAC-0048",
+      "nit_proveedor": "900921301",
+      "fecha_factura": "2026-02-28",
+      "concepto": "Servicios administrativos",
+      "base_gravable": "2180000.00",
+      "tarifa_iva": "0.19",
+      "valor_iva": "414200.00",
+      "tarifa_retencion": "0.025",
+      "valor_retencion": "54500.00",
+      "total_factura": "2539700.00",
+      "estado": "CORRECTA",
+      "causas": [],
+      "advertencias": [
+        {
+          "codigo": "PERIODO_POSTERIOR",
+          "etiqueta": "Contabilizada en periodo posterior",
+          "tipo": "ADVERTENCIA",
+          "detalle": "Factura de 2026-02 contabilizada en 2026-03 (revisar corte contable).",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        }
+      ],
+      "calculos": {
+        "iva_esperado": "414200.00",
+        "retencion_esperada": "54500.00",
+        "total_esperado": "2539700.00",
+        "valor_contabilizado": "2539700.00"
+      }
+    },
+    {
+      "fila": 50,
+      "id_factura": "FAC-0004",
+      "nit_proveedor": "900028506",
+      "fecha_factura": "2026-02-15",
+      "concepto": "Arrendamiento",
+      "base_gravable": "1900000.00",
+      "tarifa_iva": "0.19",
+      "valor_iva": "361000.00",
+      "tarifa_retencion": "0.025",
+      "valor_retencion": "47500.00",
+      "total_factura": "2213500.00",
+      "estado": "CON_INCONSISTENCIA",
+      "causas": [
+        {
+          "codigo": "DUPLICADA",
+          "etiqueta": "Factura duplicada",
+          "tipo": "INCONSISTENCIA",
+          "detalle": "El id FAC-0004 aparece 2 veces (filas 5, 50).",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        },
+        {
+          "codigo": "VALOR_CONTABLE_DIFERENTE",
+          "etiqueta": "Valor contabilizado diferente",
+          "tipo": "INCONSISTENCIA",
+          "detalle": "Valor contabilizado $3.659.250; total de la factura $2.213.500.",
+          "valor_reportado": "3659250.00",
+          "valor_esperado": "2213500.00",
+          "diferencia": "1445750.00"
+        }
+      ],
+      "advertencias": [
+        {
+          "codigo": "LINEA_CONTABLE_EN_CERO",
+          "etiqueta": "Línea contable sin valor",
+          "tipo": "ADVERTENCIA",
+          "detalle": "Línea contable sin valor (fila 49, cuenta 512010, centro de costo CC1002).",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        },
+        {
+          "codigo": "FECHA_CONTABLE_ANTERIOR",
+          "etiqueta": "Contabilizada antes de la fecha de factura",
+          "tipo": "ADVERTENCIA",
+          "detalle": "Contabilizada el 2026-01-06, antes de la fecha de la factura (2026-02-15).",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        }
+      ],
+      "calculos": {
+        "iva_esperado": "361000.00",
+        "retencion_esperada": "47500.00",
+        "total_esperado": "2213500.00",
+        "valor_contabilizado": "3659250.00"
+      }
+    },
+    {
+      "fila": 51,
+      "id_factura": "FAC-0015",
+      "nit_proveedor": "900115022",
+      "fecha_factura": "2026-03-21",
+      "concepto": "Compra de suministros",
+      "base_gravable": "2940000.00",
+      "tarifa_iva": "0.19",
+      "valor_iva": "558600.00",
+      "tarifa_retencion": "0.025",
+      "valor_retencion": "73500.00",
+      "total_factura": "3425100.00",
+      "estado": "CON_INCONSISTENCIA",
+      "causas": [
+        {
+          "codigo": "DUPLICADA",
+          "etiqueta": "Factura duplicada",
+          "tipo": "INCONSISTENCIA",
+          "detalle": "El id FAC-0015 aparece 2 veces (filas 16, 51).",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        },
+        {
+          "codigo": "VALOR_CONTABLE_DIFERENTE",
+          "etiqueta": "Valor contabilizado diferente",
+          "tipo": "INCONSISTENCIA",
+          "detalle": "Valor contabilizado $3.603.250; total de la factura $3.425.100.",
+          "valor_reportado": "3603250.00",
+          "valor_esperado": "3425100.00",
+          "diferencia": "178150.00"
+        }
+      ],
+      "advertencias": [
+        {
+          "codigo": "PERIODO_POSTERIOR",
+          "etiqueta": "Contabilizada en periodo posterior",
+          "tipo": "ADVERTENCIA",
+          "detalle": "Factura de 2026-03 contabilizada en 2026-04 (revisar corte contable).",
+          "valor_reportado": null,
+          "valor_esperado": null,
+          "diferencia": null
+        }
+      ],
+      "calculos": {
+        "iva_esperado": "558600.00",
+        "retencion_esperada": "73500.00",
+        "total_esperado": "3425100.00",
+        "valor_contabilizado": "3603250.00"
+      }
+    }
+  ],
+  "registros_contables_sin_factura": [],
+  "tolerancia": "1.00"
+}
