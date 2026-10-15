@@ -1,0 +1,90 @@
+<div class="resumen">
+  <div class="kpis">
+    <app-tarjeta-kpi
+      etiqueta="Facturas procesadas"
+      [valor]="resumen().total_registros"
+      [detalle]="
+        resumen().facturas_unicas +
+        ' únicas · ' +
+        resumen().registros_contables +
+        ' registros contables'
+      "
+    />
+    <app-tarjeta-kpi
+      etiqueta="Correctas"
+      tono="exito"
+      [valor]="resumen().correctas"
+      [detalle]="(fraccionCorrectas() | porcentaje) + ' del total'"
+    />
+    <app-tarjeta-kpi
+      etiqueta="Con inconsistencia"
+      tono="peligro"
+      [valor]="resumen().con_inconsistencia"
+      [detalle]="(fraccionInconsistentes() | porcentaje) + ' del total'"
+    />
+    <app-tarjeta-kpi
+      etiqueta="Con advertencias"
+      tono="advertencia"
+      [valor]="resumen().con_advertencias"
+      detalle="Para revisión; no cambian la clasificación"
+    />
+  </div>
+
+  <div class="kpis kpis--montos">
+    <app-tarjeta-kpi
+      etiqueta="Monto sin contabilizar"
+      [valor]="resumen().monto_sin_contabilizar | monto"
+      detalle="Facturas sin registro contable"
+    />
+    <app-tarjeta-kpi
+      etiqueta="Contabilización no en firme"
+      [valor]="resumen().monto_no_en_firme | monto"
+      detalle="Registros en estado distinto a Contabilizada"
+    />
+    <app-tarjeta-kpi
+      etiqueta="Diferencias de cálculo"
+      [valor]="resumen().monto_diferencias_calculo | monto"
+      detalle="Suma de diferencias en IVA, retención y total"
+    />
+  </div>
+
+  <div class="causas">
+    @if (inconsistencias().length) {
+      <div class="causas__grupo">
+        <h3>Inconsistencias por causa</h3>
+        <ul class="lista-causas">
+          @for (causa of inconsistencias(); track causa.codigo) {
+            <li class="lista-causas__item lista-causas__item--peligro">
+              <span class="lista-causas__texto">{{ causa.etiqueta }}</span>
+              <span class="lista-causas__cantidad cifra">{{ causa.cantidad }}</span>
+              <span class="lista-causas__barra" aria-hidden="true">
+                <span [style.width]="anchoBarra(causa)"></span>
+              </span>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+    @if (advertencias().length) {
+      <div class="causas__grupo">
+        <h3>Advertencias</h3>
+        <ul class="lista-causas">
+          @for (causa of advertencias(); track causa.codigo) {
+            <li class="lista-causas__item lista-causas__item--advertencia">
+              <span class="lista-causas__texto">{{ causa.etiqueta }}</span>
+              <span class="lista-causas__cantidad cifra">{{ causa.cantidad }}</span>
+              <span class="lista-causas__barra" aria-hidden="true">
+                <span [style.width]="anchoBarra(causa)"></span>
+              </span>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </div>
+
+  <p class="nota">
+    Una factura puede tener varias causas. Tolerancia en las comparaciones de valores: ±
+    {{ tolerancia() | monto }}.
+  </p>
+</div>

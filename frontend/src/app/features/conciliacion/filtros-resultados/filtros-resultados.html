@@ -1,0 +1,65 @@
+<div class="filtros">
+  <fieldset class="estado">
+    <legend class="campo__etiqueta">Estado</legend>
+    <div class="estado__opciones">
+      @for (opcion of opcionesEstado(); track opcion.valor) {
+        <label class="segmento">
+          <input
+            type="radio"
+            name="filtro-estado"
+            [value]="opcion.valor"
+            [checked]="estado() === opcion.valor"
+            (change)="estado.set(opcion.valor)"
+          />
+          <span class="segmento__texto">
+            {{ opcion.texto }}&nbsp;<span class="cifra">({{ opcion.cantidad }})</span>
+          </span>
+        </label>
+      }
+    </div>
+  </fieldset>
+
+  <div class="campo">
+    <label class="campo__etiqueta" for="filtro-causa">Causa</label>
+    <select id="filtro-causa" class="campo__control" (change)="alCambiarCausa($event)">
+      <option value="TODAS" [selected]="causa() === 'TODAS'">Todas las causas</option>
+      @if (causasInconsistencia().length) {
+        <optgroup label="Inconsistencias">
+          @for (opcion of causasInconsistencia(); track opcion.codigo) {
+            <option [value]="opcion.codigo" [selected]="causa() === opcion.codigo">
+              {{ opcion.etiqueta }} ({{ opcion.cantidad }})
+            </option>
+          }
+        </optgroup>
+      }
+      @if (causasAdvertencia().length) {
+        <optgroup label="Advertencias">
+          @for (opcion of causasAdvertencia(); track opcion.codigo) {
+            <option [value]="opcion.codigo" [selected]="causa() === opcion.codigo">
+              {{ opcion.etiqueta }} ({{ opcion.cantidad }})
+            </option>
+          }
+        </optgroup>
+      }
+    </select>
+  </div>
+
+  <div class="campo">
+    <label class="campo__etiqueta" for="filtro-busqueda">Buscar</label>
+    <input
+      id="filtro-busqueda"
+      class="campo__control"
+      type="search"
+      placeholder="Factura, NIT o concepto"
+      autocomplete="off"
+      [value]="busqueda()"
+      (input)="alBuscar($event)"
+    />
+  </div>
+
+  @if (hayFiltros()) {
+    <button appBoton variante="texto" type="button" class="limpiar" (click)="limpiar.emit()">
+      Limpiar filtros
+    </button>
+  }
+</div>

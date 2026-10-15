@@ -1,0 +1,98 @@
+@use 'mixins' as *;
+
+.filtros {
+  display: grid;
+  gap: var(--espacio-4);
+  padding: var(--espacio-4);
+  border-radius: var(--radio-md);
+  background: var(--color-fondo);
+  box-shadow: var(--sombra-suave);
+
+  @include desde(escritorio) {
+    grid-template-columns: auto 1fr 1fr auto;
+    align-items: end;
+  }
+}
+
+.estado {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+}
+
+.campo__etiqueta {
+  padding: 0;
+  margin-bottom: var(--espacio-1);
+  font-size: var(--texto-sm);
+  font-weight: var(--peso-negrita);
+}
+
+.campo__control {
+  min-height: var(--objetivo-tactil);
+  padding: var(--espacio-2) var(--espacio-3);
+  border: 1px solid var(--color-borde-control);
+  border-radius: var(--radio-sm);
+  background: var(--color-fondo);
+  width: 100%;
+
+  &:focus-visible {
+    @include foco-visible;
+  }
+}
+
+// Botones de opción con aspecto de control segmentado; siguen siendo radios nativos.
+.estado__opciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+}
+
+.segmento {
+  position: relative;
+  flex: 1 1 auto;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+}
+
+.segmento__texto {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--objetivo-tactil);
+  padding: var(--espacio-2) var(--espacio-4);
+  border: 1px solid var(--color-borde-control);
+  border-radius: var(--radio-pildora);
+  font-size: var(--texto-sm);
+  font-weight: var(--peso-semi);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+// Seleccionado: fondo oscuro + texto blanco + borde grueso (no depende solo del color).
+input:checked + .segmento__texto {
+  background: var(--color-texto);
+  border-color: var(--color-texto);
+  color: var(--color-fondo);
+  font-weight: var(--peso-negrita);
+}
+
+input:focus-visible + .segmento__texto {
+  @include foco-visible;
+}
+
+.limpiar {
+  justify-self: start;
+}

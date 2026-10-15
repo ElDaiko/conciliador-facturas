@@ -2,64 +2,7 @@
 <app-encabezado />
 
 <main id="contenido" class="contenido" tabindex="-1">
-  <h1>Vitrina de componentes</h1>
-  <p class="intro">Vista temporal para revisar el sistema visual (fase 3).</p>
-
-  <section class="bloque" aria-labelledby="titulo-carga">
-    <h2 id="titulo-carga">Carga de archivos</h2>
-    <div class="rejilla rejilla--2">
-      <app-selector-archivo etiqueta="Archivo de facturas" [(archivo)]="facturas" />
-      <app-selector-archivo etiqueta="Archivo de contabilidad" [(archivo)]="contabilidad" />
-    </div>
-    <div class="acciones">
-      <button appBoton type="button" [disabled]="!facturas() || !contabilidad()">
-        Conciliar archivos
-      </button>
-      <button appBoton variante="secundario" type="button">Secundario</button>
-      <button appBoton variante="texto" type="button">Texto</button>
-    </div>
-  </section>
-
-  <section class="bloque" aria-labelledby="titulo-resumen">
-    <h2 id="titulo-resumen">Resumen</h2>
-    <div class="rejilla rejilla--4">
-      <app-tarjeta-kpi etiqueta="Facturas procesadas" [valor]="50" detalle="48 únicas" />
-      <app-tarjeta-kpi etiqueta="Correctas" [valor]="32" tono="exito" detalle="64 %" />
-      <app-tarjeta-kpi etiqueta="Con inconsistencia" [valor]="18" tono="peligro" detalle="36 %" />
-      <app-tarjeta-kpi
-        etiqueta="Sin contabilizar"
-        [valor]="'11521700.00' | monto"
-        tono="advertencia"
-        detalle="4 facturas"
-      />
-    </div>
-  </section>
-
-  <section class="bloque" aria-labelledby="titulo-estados">
-    <h2 id="titulo-estados">Estados</h2>
-    <div class="acciones">
-      <app-insignia-estado tipo="correcta" />
-      <app-insignia-estado tipo="inconsistencia" />
-      <app-insignia-estado tipo="advertencia" texto="Línea contable sin valor" />
-    </div>
-    <app-indicador-carga mensaje="Procesando archivos…" />
-  </section>
-
-  <section class="bloque" aria-labelledby="titulo-mensajes">
-    <h2 id="titulo-mensajes">Mensajes</h2>
-    <app-alerta tono="error" titulo="No fue posible procesar los archivos">
-      <p>Al archivo 'facturas.csv' le faltan columnas obligatorias: tarifa_iva.</p>
-    </app-alerta>
-    <app-alerta tono="exito" titulo="Conciliación completada">
-      <p>Se procesaron 50 facturas.</p>
-    </app-alerta>
-    <app-alerta tono="advertencia" titulo="Revisar corte contable">
-      <p>4 facturas se contabilizaron en un periodo posterior.</p>
-    </app-alerta>
-    <app-alerta tono="info">
-      <p>Cargue los dos archivos para iniciar la conciliación.</p>
-    </app-alerta>
-  </section>
+  <app-conciliacion-page />
 </main>
 
 <app-pie-pagina />

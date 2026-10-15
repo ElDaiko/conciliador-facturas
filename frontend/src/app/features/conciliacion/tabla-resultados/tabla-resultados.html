@@ -1,0 +1,84 @@
+@if (filas().length) {
+  <table class="tabla" role="table">
+    <caption class="solo-lector">
+      Resultado por factura. El botón Ver detalle muestra las causas y los cálculos.
+    </caption>
+    <thead role="rowgroup">
+      <tr role="row">
+        <th role="columnheader" scope="col">Fila</th>
+        <th role="columnheader" scope="col">Factura</th>
+        <th role="columnheader" scope="col">Fecha</th>
+        <th role="columnheader" scope="col">Concepto</th>
+        <th role="columnheader" scope="col" class="numero">Total</th>
+        <th role="columnheader" scope="col">Estado</th>
+        <th role="columnheader" scope="col">Causas</th>
+        <th role="columnheader" scope="col"><span class="solo-lector">Acciones</span></th>
+      </tr>
+    </thead>
+    <tbody role="rowgroup">
+      @for (factura of filas(); track factura.fila) {
+        <tr
+          role="row"
+          class="fila"
+          [class.fila--inconsistente]="factura.estado === 'CON_INCONSISTENCIA'"
+          [class.fila--abierta]="estaAbierta(factura.fila)"
+        >
+          <td role="cell" data-etiqueta="Fila" class="cifra">{{ factura.fila }}</td>
+          <td role="cell" data-etiqueta="Factura">
+            <span class="factura__id">{{ factura.id_factura || 'Sin id' }}</span>
+            <span class="secundario">NIT {{ factura.nit_proveedor || '—' }}</span>
+          </td>
+          <td role="cell" data-etiqueta="Fecha" class="cifra">
+            {{ factura.fecha_factura ?? '—' }}
+          </td>
+          <td role="cell" data-etiqueta="Concepto">{{ factura.concepto || '—' }}</td>
+          <td role="cell" data-etiqueta="Total" class="numero cifra">
+            {{ factura.total_factura | monto }}
+          </td>
+          <td role="cell" data-etiqueta="Estado">
+            <app-insignia-estado
+              [tipo]="factura.estado === 'CORRECTA' ? 'correcta' : 'inconsistencia'"
+            />
+          </td>
+          <td role="cell" data-etiqueta="Causas">
+            @if (factura.causas.length) {
+              <span>{{ etiquetasCausas(factura) }}</span>
+            } @else {
+              <span class="secundario">Ninguna</span>
+            }
+            @if (factura.advertencias.length) {
+              <span class="advertencias">
+                + {{ factura.advertencias.length }}
+                {{ factura.advertencias.length === 1 ? 'advertencia' : 'advertencias' }}
+              </span>
+            }
+          </td>
+          <td role="cell" class="accion">
+            <button
+              appBoton
+              variante="texto"
+              type="button"
+              [attr.aria-expanded]="estaAbierta(factura.fila)"
+              [attr.aria-controls]="estaAbierta(factura.fila) ? 'detalle-' + factura.fila : null"
+              (click)="alternar(factura.fila)"
+            >
+              {{ estaAbierta(factura.fila) ? 'Ocultar detalle' : 'Ver detalle' }}
+              <span class="solo-lector">
+                de {{ factura.id_factura || 'la factura' }}, fila {{ factura.fila }}
+              </span>
+            </button>
+          </td>
+        </tr>
+        @if (estaAbierta(factura.fila)) {
+          <tr role="row" class="fila-detalle">
+            <td role="cell" colspan="8" [id]="'detalle-' + factura.fila">
+              <app-detalle-factura [factura]="factura" />
+            </td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+} @else {
+  <p class="vacio">No hay facturas que coincidan con los filtros seleccionados.</p>
+}

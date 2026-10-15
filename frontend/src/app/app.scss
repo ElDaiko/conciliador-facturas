@@ -1,9 +1,6 @@
 @use 'mixins' as *;
 
 .contenido {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacio-5);
   max-width: var(--ancho-contenido);
   margin-inline: auto;
   padding: var(--espacio-5) var(--espacio-4);
@@ -15,54 +12,4 @@
   &:focus {
     outline: none; // recibe foco solo desde "Saltar al contenido"
   }
-}
-
-h1 {
-  font-size: var(--texto-xl);
-
-  @include desde(tablet) {
-    font-size: var(--texto-2xl);
-  }
-}
-
-h2 {
-  font-size: var(--texto-lg);
-}
-
-.intro {
-  color: var(--color-texto-secundario);
-}
-
-.bloque {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacio-4);
-}
-
-// Mobile first: una columna; se amplía en pantallas más grandes.
-.rejilla {
-  display: grid;
-  gap: var(--espacio-4);
-}
-
-.rejilla--2 {
-  @include desde(tablet) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-// Una columna en pantallas muy angostas, dos desde ~360 px y cuatro en escritorio.
-.rejilla--4 {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));
-
-  @include desde(escritorio) {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-.acciones {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--espacio-3);
 }

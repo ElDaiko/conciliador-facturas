@@ -1,0 +1,56 @@
+@use 'mixins' as *;
+
+.pagina {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-5);
+}
+
+.pagina__intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+
+  h1 {
+    font-size: var(--texto-xl);
+
+    @include desde(tablet) {
+      font-size: var(--texto-2xl);
+    }
+  }
+
+  p {
+    max-width: 60ch;
+    color: var(--color-texto-secundario);
+  }
+}
+
+.seccion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+}
+
+h2 {
+  font-size: var(--texto-lg);
+
+  &:focus {
+    outline: none; // recibe foco por programa al mostrar resultados, no por teclado
+  }
+}
+
+app-alerta:focus {
+  outline: none;
+}
+
+.conteo,
+.nota {
+  font-size: var(--texto-sm);
+  color: var(--color-texto-secundario);
+}
+
+.huerfanos {
+  margin: 0;
+  padding-left: var(--espacio-5);
+  font-size: var(--texto-sm);
+}

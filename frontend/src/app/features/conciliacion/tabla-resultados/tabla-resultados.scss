@@ -1,0 +1,201 @@
+@use 'mixins' as *;
+
+// ---- Móvil (base): cada fila es una tarjeta ----
+.tabla,
+thead,
+tbody,
+tr,
+th,
+td {
+  display: block;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  @include solo-lector;
+}
+
+tbody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+}
+
+.fila {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--espacio-3);
+  padding: var(--espacio-4);
+  border-radius: var(--radio-md);
+  border-left: 4px solid var(--color-exito);
+  background: var(--color-fondo);
+  box-shadow: var(--sombra-suave);
+}
+
+.fila--inconsistente {
+  border-left-color: var(--color-peligro);
+}
+
+td {
+  min-width: 0;
+  font-size: var(--texto-sm);
+
+  // La etiqueta de cada dato se toma del atributo data-etiqueta.
+  &[data-etiqueta]::before {
+    content: attr(data-etiqueta);
+    display: block;
+    font-size: var(--texto-xs);
+    font-weight: var(--peso-negrita);
+    color: var(--color-texto-tenue);
+  }
+}
+
+// En la tarjeta, la fila del archivo no aporta: se muestra junto al id en escritorio.
+td[data-etiqueta='Fila'] {
+  display: none;
+}
+
+td[data-etiqueta='Factura'],
+td[data-etiqueta='Concepto'],
+td[data-etiqueta='Estado'],
+td[data-etiqueta='Causas'],
+td.accion {
+  grid-column: 1 / -1;
+}
+
+.factura__id {
+  display: block;
+  font-size: var(--texto-md);
+  font-weight: var(--peso-extra);
+}
+
+.secundario {
+  display: block;
+  color: var(--color-texto-secundario);
+}
+
+.advertencias {
+  display: block;
+  margin-top: var(--espacio-1);
+  font-weight: var(--peso-semi);
+  color: var(--color-advertencia);
+}
+
+.accion {
+  justify-self: start;
+  margin-left: calc(-1 * var(--espacio-3));
+}
+
+.fila-detalle {
+  margin-top: calc(-1 * var(--espacio-2));
+}
+
+.vacio {
+  padding: var(--espacio-5);
+  border-radius: var(--radio-md);
+  background: var(--color-fondo);
+  text-align: center;
+  color: var(--color-texto-secundario);
+}
+
+// ---- Escritorio: tabla tradicional ----
+@include desde(escritorio) {
+  .tabla {
+    display: table;
+    border-radius: var(--radio-md);
+    background: var(--color-fondo);
+    box-shadow: var(--sombra-suave);
+    overflow: hidden;
+  }
+
+  thead {
+    all: revert;
+    display: table-header-group;
+  }
+
+  tbody {
+    display: table-row-group;
+  }
+
+  tr,
+  .fila {
+    display: table-row;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: none;
+  }
+
+  th,
+  td {
+    display: table-cell;
+    padding: var(--espacio-3);
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--color-borde);
+
+    &[data-etiqueta]::before {
+      content: none;
+    }
+  }
+
+  th {
+    font-size: var(--texto-xs);
+    font-weight: var(--peso-negrita);
+    color: var(--color-texto-secundario);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: var(--color-fondo-alterno);
+  }
+
+  td[data-etiqueta='Fila'] {
+    display: table-cell;
+    color: var(--color-texto-tenue);
+  }
+
+  // Fechas, NIT y montos en una sola línea.
+  td[data-etiqueta='Fecha'],
+  td[data-etiqueta='Total'],
+  td[data-etiqueta='Factura'] .secundario {
+    white-space: nowrap;
+  }
+
+  // Indicador de estado en el borde izquierdo de la fila.
+  .fila td:first-child {
+    border-left: 4px solid var(--color-exito);
+  }
+
+  .fila--inconsistente td:first-child {
+    border-left-color: var(--color-peligro);
+  }
+
+  .fila--abierta td {
+    border-bottom-color: transparent;
+  }
+
+  .numero {
+    text-align: right;
+  }
+
+  .factura__id {
+    font-size: var(--texto-sm);
+  }
+
+  .accion {
+    margin-left: 0;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .fila-detalle {
+    margin: 0;
+
+    td {
+      padding: 0 var(--espacio-4) var(--espacio-4);
+    }
+  }
+}

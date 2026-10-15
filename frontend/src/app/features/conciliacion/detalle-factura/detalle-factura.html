@@ -1,0 +1,88 @@
+<div class="detalle">
+  <div class="hallazgos">
+    @if (factura().causas.length) {
+      <h3>Causas de inconsistencia</h3>
+      <ul>
+        @for (causa of factura().causas; track $index) {
+          <li class="hallazgo">
+            <app-insignia-estado tipo="inconsistencia" [texto]="causa.etiqueta" />
+            <p>{{ causa.detalle }}</p>
+            @if (causa.diferencia !== null) {
+              <dl class="valores">
+                <div>
+                  <dt>Reportado</dt>
+                  <dd class="cifra">{{ causa.valor_reportado | monto }}</dd>
+                </div>
+                <div>
+                  <dt>Esperado</dt>
+                  <dd class="cifra">{{ causa.valor_esperado | monto }}</dd>
+                </div>
+                <div>
+                  <dt>Diferencia</dt>
+                  <dd class="cifra">{{ causa.diferencia | monto }}</dd>
+                </div>
+              </dl>
+            }
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="sin-causas">La factura cumple todas las reglas de conciliación.</p>
+    }
+
+    @if (factura().advertencias.length) {
+      <h3>Advertencias <span class="nota">(para revisión; no cambian la clasificación)</span></h3>
+      <ul>
+        @for (advertencia of factura().advertencias; track $index) {
+          <li class="hallazgo">
+            <app-insignia-estado tipo="advertencia" [texto]="advertencia.etiqueta" />
+            <p>{{ advertencia.detalle }}</p>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  <div class="calculos">
+    <h3>Cálculos</h3>
+    <table>
+      <caption class="solo-lector">
+        Valores reportados en la factura frente a los calculados por el sistema
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col">Concepto</th>
+          <th scope="col" class="numero">Reportado</th>
+          <th scope="col" class="numero">Calculado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Base gravable</th>
+          <td class="numero cifra">{{ factura().base_gravable | monto }}</td>
+          <td class="numero cifra">—</td>
+        </tr>
+        <tr>
+          <th scope="row">IVA ({{ factura().tarifa_iva | porcentaje }})</th>
+          <td class="numero cifra">{{ factura().valor_iva | monto }}</td>
+          <td class="numero cifra">{{ factura().calculos.iva_esperado | monto }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Retención ({{ factura().tarifa_retencion | porcentaje }})</th>
+          <td class="numero cifra">{{ factura().valor_retencion | monto }}</td>
+          <td class="numero cifra">{{ factura().calculos.retencion_esperada | monto }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Total (base + IVA − retención)</th>
+          <td class="numero cifra">{{ factura().total_factura | monto }}</td>
+          <td class="numero cifra">{{ factura().calculos.total_esperado | monto }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Valor contabilizado</th>
+          <td class="numero cifra">—</td>
+          <td class="numero cifra">{{ factura().calculos.valor_contabilizado | monto }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,44 @@
+@use 'mixins' as *;
+
+.tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+  padding: var(--espacio-4);
+  border-radius: var(--radio-lg);
+  background: var(--color-fondo);
+  box-shadow: var(--sombra-suave);
+
+  @include desde(tablet) {
+    padding: var(--espacio-5);
+  }
+}
+
+h2 {
+  font-size: var(--texto-lg);
+}
+
+.tarjeta__ayuda {
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-sm);
+}
+
+.selectores {
+  display: grid;
+  gap: var(--espacio-4);
+
+  @include desde(tablet) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+// En móvil los botones ocupan todo el ancho (más fáciles de tocar).
+.acciones {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+
+  @include desde(tablet) {
+    flex-direction: row;
+  }
+}

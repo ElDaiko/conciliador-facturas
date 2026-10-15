@@ -1,0 +1,51 @@
+<section class="tarjeta" aria-labelledby="titulo-carga">
+  <h2 id="titulo-carga">1. Cargar archivos</h2>
+  <p class="tarjeta__ayuda">
+    Seleccione el archivo de facturas de proveedores y el de registros contables.
+  </p>
+
+  <div class="selectores">
+    <app-selector-archivo
+      etiqueta="Archivo de facturas"
+      [(archivo)]="facturas"
+      [deshabilitado]="cargando()"
+    />
+    <app-selector-archivo
+      etiqueta="Archivo de contabilidad"
+      [(archivo)]="contabilidad"
+      [deshabilitado]="cargando()"
+    />
+  </div>
+
+  <div class="acciones">
+    <button
+      appBoton
+      type="button"
+      [disabled]="!puedeConciliar()"
+      aria-describedby="ayuda-conciliar"
+      (click)="conciliar.emit()"
+    >
+      Conciliar archivos
+    </button>
+    @if (mostrarLimpiar()) {
+      <button
+        appBoton
+        variante="secundario"
+        type="button"
+        [disabled]="cargando()"
+        (click)="limpiar.emit()"
+      >
+        Empezar de nuevo
+      </button>
+    }
+  </div>
+  <p id="ayuda-conciliar" class="tarjeta__ayuda">
+    @if (cargando()) {
+      Procesando los archivos…
+    } @else if (!facturas() || !contabilidad()) {
+      Seleccione los dos archivos para habilitar la conciliación.
+    } @else {
+      Archivos listos para conciliar.
+    }
+  </p>
+</section>

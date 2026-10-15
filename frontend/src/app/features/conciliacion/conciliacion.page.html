@@ -1,0 +1,84 @@
+<div class="pagina">
+  <header class="pagina__intro">
+    <h1>Conciliación de facturas y retenciones</h1>
+    <p>
+      Compare las facturas de proveedores con los registros contables: el sistema valida IVA,
+      retención, total, duplicados y estado de contabilización.
+    </p>
+  </header>
+
+  <app-carga-archivos
+    [(facturas)]="store.facturas"
+    [(contabilidad)]="store.contabilidad"
+    [cargando]="store.cargando()"
+    [puedeConciliar]="store.puedeConciliar()"
+    [mostrarLimpiar]="!!store.resultado() || !!store.error()"
+    (conciliar)="store.conciliar()"
+    (limpiar)="store.reiniciar()"
+  />
+
+  @switch (store.estado()) {
+    @case ('cargando') {
+      <app-indicador-carga mensaje="Procesando archivos…" />
+    }
+    @case ('error') {
+      <app-alerta
+        #alertaError
+        tono="error"
+        titulo="No fue posible procesar los archivos"
+        tabindex="-1"
+      >
+        <p>{{ store.error() }}</p>
+      </app-alerta>
+    }
+  }
+
+  @if (store.resultado(); as resultado) {
+    <section class="seccion" aria-labelledby="titulo-resultados">
+      <h2 id="titulo-resultados" #tituloResultados tabindex="-1">
+        2. Resultado de la conciliación
+      </h2>
+      <app-resumen-conciliacion [resumen]="resultado.resumen" [tolerancia]="resultado.tolerancia" />
+    </section>
+
+    <section class="seccion" aria-labelledby="titulo-detalle">
+      <h2 id="titulo-detalle">3. Detalle por factura</h2>
+      <app-filtros-resultados
+        [resumen]="resultado.resumen"
+        [(estado)]="store.filtroEstado"
+        [(causa)]="store.filtroCausa"
+        [(busqueda)]="store.busqueda"
+        (limpiar)="store.limpiarFiltros()"
+      />
+      <p class="conteo" aria-live="polite">
+        Mostrando <strong class="cifra">{{ store.detalleFiltrado().length }}</strong> de
+        <span class="cifra">{{ resultado.detalle.length }}</span> facturas.
+      </p>
+      <app-tabla-resultados [filas]="store.detalleFiltrado()" />
+    </section>
+
+    <section class="seccion" aria-labelledby="titulo-huerfanos">
+      <h2 id="titulo-huerfanos">4. Registros contables sin factura</h2>
+      @if (resultado.registros_contables_sin_factura.length) {
+        <app-alerta tono="advertencia">
+          <p>
+            {{ resultado.registros_contables_sin_factura.length }} registros contables no tienen una
+            factura asociada en el archivo de facturas.
+          </p>
+        </app-alerta>
+        <ul class="huerfanos">
+          @for (registro of resultado.registros_contables_sin_factura; track registro.fila) {
+            <li>
+              Fila {{ registro.fila }} · {{ registro.id_factura || 'Sin id' }} · cuenta
+              {{ registro.cuenta_contable }} ·
+              <span class="cifra">{{ registro.valor_debito | monto }}</span>
+              · {{ registro.estado }}
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="nota">Todos los registros contables tienen una factura asociada.</p>
+      }
+    </section>
+  }
+</div>
