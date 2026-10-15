@@ -8,6 +8,8 @@ Prototipo web que cruza el archivo de **facturas de proveedores** con el de **re
 
 - [Requisitos](#requisitos)
 - [Estructura del repositorio](#estructura-del-repositorio)
+- [Ejecución del backend](#ejecución-del-backend)
+- [API](#api)
 - [Reglas de negocio](#reglas-de-negocio)
 - [Resultado esperado con los archivos de prueba](#resultado-esperado-con-los-archivos-de-prueba)
 - [Supuestos](#supuestos)
@@ -29,9 +31,153 @@ No se requiere base de datos, credenciales ni acceso a sistemas corporativos. To
 .
 ├── backend/     API REST en Python (FastAPI)
 ├── frontend/    Aplicación web en Angular
-├── data/        Archivos CSV de prueba
+├── data/        Archivos CSV de prueba (casos-borde/ para probar errores)
 └── docs/        Reglas de negocio, decisiones (ADR), declaración de IA y presentación
 ```
+
+## Ejecución del backend
+
+Desde la raíz del repositorio:
+
+```bash
+cd backend
+python3 -m venv .venv                              # entorno aislado de dependencias
+.venv/bin/pip install -r requirements-dev.txt     # dependencias con versiones fijas
+.venv/bin/uvicorn app.main:app --port 8000         # inicia la API
+```
+
+> En Windows, reemplace `.venv/bin/` por `.venv\Scripts\`.
+
+- API: http://localhost:8000/api
+- Documentación interactiva (Swagger): http://localhost:8000/docs. Desde ahí se pueden cargar los archivos y probar el servicio sin el frontend.
+
+Prueba rápida desde otra terminal, en la raíz del repositorio:
+
+```bash
+curl -F facturas=@data/facturas.csv -F contabilidad=@data/contabilidad.csv \
+     http://localhost:8000/api/conciliaciones
+```
+
+Pruebas automatizadas y lint:
+
+```bash
+cd backend
+.venv/bin/pytest            # 60 pruebas
+.venv/bin/ruff check .      # lint
+```
+
+### Dependencias del backend
+
+| Paquete | Versión | Uso |
+|---|---|---|
+| fastapi | 0.143.2 | Framework de la API REST |
+| uvicorn | 0.54.0 | Servidor ASGI |
+| python-multipart | 0.0.32 | Recepción de archivos (`multipart/form-data`) |
+| pytest | 9.1.1 | Pruebas (solo desarrollo) |
+| httpx2 | 2.13.1 | Cliente HTTP para las pruebas de la API (solo desarrollo) |
+| ruff | 0.17.1 | Lint y formato (solo desarrollo) |
+
+## API
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| `GET` | `/api/health` | Estado del servicio |
+| `POST` | `/api/conciliaciones` | Recibe los dos CSV y devuelve el resultado de la conciliación |
+
+### `POST /api/conciliaciones`
+
+**Solicitud:** `multipart/form-data` con dos archivos: `facturas` y `contabilidad`. El servicio no guarda nada: cada solicitud se procesa en memoria.
+
+**Respuesta 200** (resumida):
+
+```json
+{
+  "resumen": {
+    "total_registros": 50,
+    "facturas_unicas": 48,
+    "correctas": 32,
+    "con_inconsistencia": 18,
+    "con_advertencias": 11,
+    "registros_contables": 50,
+    "por_causa": [
+      { "codigo": "DUPLICADA", "etiqueta": "Factura duplicada", "tipo": "INCONSISTENCIA", "cantidad": 4 }
+    ],
+    "monto_sin_contabilizar": "11521700.00",
+    "monto_no_en_firme": "5572350.00",
+    "monto_diferencias_calculo": "106500.00"
+  },
+  "detalle": [
+    {
+      "fila": 7,
+      "id_factura": "FAC-0006",
+      "nit_proveedor": "900782207",
+      "fecha_factura": "2026-03-07",
+      "concepto": "Consultoría profesional",
+      "base_gravable": "3800000.00",
+      "tarifa_iva": "0.05",
+      "valor_iva": "215000.00",
+      "tarifa_retencion": "0",
+      "valor_retencion": "0.00",
+      "total_factura": "3990000.00",
+      "estado": "CON_INCONSISTENCIA",
+      "causas": [
+        {
+          "codigo": "IVA_DIFERENTE",
+          "etiqueta": "IVA mal calculado",
+          "tipo": "INCONSISTENCIA",
+          "detalle": "IVA reportado $215.000; esperado $190.000 (base $3.800.000 × 5%).",
+          "valor_reportado": "215000.00",
+          "valor_esperado": "190000.00",
+          "diferencia": "25000.00"
+        }
+      ],
+      "advertencias": [
+        { "codigo": "LINEA_CONTABLE_EN_CERO", "etiqueta": "Línea contable sin valor", "tipo": "ADVERTENCIA", "detalle": "Línea contable sin valor (fila 51, cuenta 512010, centro de costo CC1002).", "valor_reportado": null, "valor_esperado": null, "diferencia": null }
+      ],
+      "calculos": {
+        "iva_esperado": "190000.00",
+        "retencion_esperada": "0.00",
+        "total_esperado": "3990000.00",
+        "valor_contabilizado": "3990000.00"
+      }
+    }
+  ],
+  "registros_contables_sin_factura": [],
+  "tolerancia": "1.00"
+}
+```
+
+- `fila` es la línea del archivo original (el encabezado es la línea 1), para ubicar la factura en Excel.
+- Los montos viajan como **texto** para no perder precisión en JSON.
+- `por_causa` lista primero las inconsistencias y luego las advertencias.
+
+### Errores
+
+Todos los errores tienen la misma forma, con el mensaje en español:
+
+```json
+{ "codigo": "COLUMNAS_FALTANTES", "mensaje": "Al archivo 'facturas.csv' le faltan columnas obligatorias: tarifa_iva.", "archivo": "facturas.csv" }
+```
+
+| HTTP | Código | Cuándo |
+|---|---|---|
+| 400 | `EXTENSION_INVALIDA` | El archivo no tiene extensión `.csv` |
+| 400 | `ARCHIVO_VACIO` | El archivo está vacío o solo tiene encabezado |
+| 400 | `COLUMNAS_FALTANTES` | Faltan columnas obligatorias (se listan) |
+| 400 | `CODIFICACION_INVALIDA` | El archivo no está en UTF-8 ni Windows-1252 |
+| 400 | `ARCHIVO_INVALIDO` | El contenido no es un CSV legible |
+| 413 | `ARCHIVO_DEMASIADO_GRANDE` | El archivo supera 5 MB |
+| 422 | `SOLICITUD_INVALIDA` | Falta alguno de los dos archivos |
+| 500 | `ERROR_INTERNO` | Error inesperado (el detalle técnico queda solo en el log del servidor) |
+
+Los datos inválidos en **filas individuales** (montos en letras, fechas mal escritas) no rechazan el archivo: esas facturas se marcan con `VALOR_INVALIDO` o `CAMPO_VACIO` y el resto se procesa. En `data/casos-borde/` hay archivos para probar cada caso.
+
+### Seguridad
+
+- Sin base de datos ni almacenamiento: los archivos se procesan en memoria y se descartan.
+- Límite de 5 MB por archivo y validación de extensión y estructura.
+- Cabeceras `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`; en `/api/*` también `Cache-Control: no-store` (información financiera) y `Content-Security-Policy`.
+- El log registra solo conteos, nunca datos de facturas o proveedores. Los errores inesperados no exponen trazas al cliente.
 
 ## Reglas de negocio
 
