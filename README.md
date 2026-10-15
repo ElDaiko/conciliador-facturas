@@ -517,5 +517,5 @@ Python 3.12 es la versión mínima declarada; 3.14 es la de desarrollo. Los paso
 ## Control de versiones
 
 - Desarrollo **trunk-based** sobre `main` con commits pequeños según [Conventional Commits](https://www.conventionalcommits.org/es/v1.0.0/) (`feat`, `fix`, `test`, `docs`, `refactor`, `build`, `chore`).
-- Versiones etiquetadas: **`v1.0.0`** (entrega base), **`v1.1.0`** (Docker y CI opcionales) y **`v1.1.1`** (decisiones técnicas en el README, versión para entregar); los cambios están en [`CHANGELOG.md`](CHANGELOG.md).
+- Versiones etiquetadas: **`v1.0.0`** (entrega base), **`v1.1.0`** (Docker y CI opcionales), **`v1.1.1`** (decisiones técnicas en el README) y **`v1.1.2`** (declaración de IA ampliada, versión para entregar); los cambios están en [`CHANGELOG.md`](CHANGELOG.md).
 - Se eligió trunk-based en lugar de GitFlow porque es un proyecto de un solo desarrollador y la prueba no exige un flujo de ramas (ver [Decisiones técnicas](#decisiones-técnicas)).

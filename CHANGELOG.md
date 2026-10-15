@@ -2,6 +2,11 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y [SemVer](https://semver.org/lang/es/).
 
+## [1.1.2] - 2026-10-15
+
+### Changed
+- Declaración de IA: modo de planeación, nivel de esfuerzo por etapa, revisión por fases y auditoría contra el enunciado.
+
 ## [1.1.1] - 2026-10-15
 
 ### Changed

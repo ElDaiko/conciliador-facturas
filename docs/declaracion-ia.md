@@ -3,8 +3,22 @@
 **Sí se usó IA generativa** en esta solución.
 
 - **Herramienta:** Claude Code (Anthropic), con el modelo Claude Opus 5.5, como asistente de programación en la terminal.
-- **Modo de trabajo:** desarrollo por fases con pausas. Al cerrar cada fase, el candidato revisaba el resultado y decidía si continuar o ajustar.
 - **Rastro en el repositorio:** los commits generados con asistencia incluyen la línea `Co-Authored-By: Claude`.
+
+## Cómo se usó
+
+**1. Planear antes de ejecutar (plan mode).** El análisis del enunciado y de los datos, la arquitectura y el plan por fases se hicieron en el modo de planeación de Claude Code, en el que la herramienta puede leer y analizar, pero no modificar archivos. El candidato revisó el plan, ajustó el alcance y lo aprobó antes de que se escribiera código. Así las decisiones de diseño quedaron tomadas por una persona y no sobre la marcha, y se evitó rehacer trabajo.
+
+**2. Esfuerzo de razonamiento según la tarea.** Se usó el mismo modelo con distinto nivel de esfuerzo:
+
+| Etapa | Modelo | Esfuerzo | Razón |
+|---|---|---|---|
+| Planeación y arquitectura | Claude Opus 5.5 | Alto | Es donde hay ambigüedad (reglas del enunciado, interpretación de los datos) y decisiones que condicionan todo lo demás |
+| Ejecución de tareas | Claude Opus 5.5 | Medio | Con el plan aprobado, las tareas están acotadas; un esfuerzo menor reduce tiempo y consumo de tokens sin perder calidad |
+
+**3. Fases cortas con revisión humana.** La implementación se dividió en fases (motor de reglas, API, sistema visual, pantalla, entregables). Al cerrar cada una, la IA presentaba lo hecho y cómo verificarlo, y el candidato lo revisaba antes de autorizar la siguiente. Las ambigüedades se resolvieron con preguntas explícitas al candidato, no con supuestos de la IA.
+
+**4. Auditoría contra el enunciado.** Al final se pidió a la IA contrastar la solución, punto por punto, con el documento de la prueba. Esto llevó a identificar en el README qué reglas son del enunciado y cuáles son derivadas o adicionales, a mostrar cómo cambia el resultado según la interpretación y a llevar las decisiones técnicas al README, como pide el enunciado.
 
 ## En qué partes se usó y con qué propósito
 
@@ -32,6 +46,7 @@ La IA propuso opciones; estas decisiones las tomó el candidato:
 - **Accesibilidad y mobile first** como requisitos de la interfaz.
 - Docker como extra opcional al final y README incremental desde el inicio.
 - Mantener el estado contable `Pendiente` como **inconsistencia** (regla derivada del caso) y documentarlo con el resultado alternativo.
+- Conservar los extras (Docker, CI y reglas adicionales) marcados como opcionales, y documentar las decisiones técnicas en el README.
 - Simplificar el código del backend para priorizar la legibilidad sobre la concisión.
 
 ## Cómo se validó lo generado
@@ -45,4 +60,5 @@ La IA propuso opciones; estas decisiones las tomó el candidato:
 ## Límites
 
 - Las interpretaciones de las reglas ambiguas y su efecto en el resultado están documentados en el README (secciones Supuestos y Resultado con los archivos de prueba).
-- No se usó IA con datos reales: todos los datos son los archivos ficticios entregados en la prueba y casos de prueba creados para ella.
+- La IA solo trabajó con los archivos ficticios entregados en la prueba y con casos de prueba creados para ella. No tuvo acceso a datos reales, credenciales ni sistemas corporativos.
+- Todo lo generado se trató como una propuesta: se aceptó después de revisarlo y verificarlo con los mecanismos del punto anterior.
