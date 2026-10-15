@@ -2,6 +2,14 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y [SemVer](https://semver.org/lang/es/).
 
+## [1.1.0] - 2026-10-15
+
+Extras opcionales: no cambian la funcionalidad ni la ejecución local oficial.
+
+### Added
+- Docker: `Dockerfile` del backend (sin root, con healthcheck), `Dockerfile` del frontend (build de Angular y nginx sin root que reenvía `/api`) y `docker-compose.yml`.
+- Integración continua con GitHub Actions: lint, formato, pruebas y build del backend (Python 3.12 y 3.14) y del frontend (Node 24).
+
 ## [1.0.0] - 2026-10-15
 
 Primera versión entregable del prototipo.
