@@ -14,6 +14,15 @@ from app.core.errores import ArchivoInvalidoError
 CODIFICACIONES = ("utf-8-sig", "cp1252")
 DELIMITADORES = ",;"
 
+# Primeros bytes ("firma") de formatos que suelen llegar renombrados como .csv.
+FIRMAS_NO_CSV = (
+    (b"PK\x03\x04", "un libro de Excel (.xlsx) o un archivo comprimido"),
+    (b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1", "un libro de Excel antiguo (.xls)"),
+    (b"%PDF", "un documento PDF"),
+)
+BOM_UTF16 = (b"\xff\xfe", b"\xfe\xff")
+SUGERENCIA_GUARDAR = "Ábralo en Excel y use 'Guardar como' → 'CSV UTF-8 (delimitado por comas)'."
+
 
 @dataclass(frozen=True)
 class FilaCsv:
@@ -29,8 +38,12 @@ def leer_csv(
             f"El archivo '{nombre}' está vacío.", codigo="ARCHIVO_VACIO", archivo=nombre
         )
 
+    _validar_que_sea_texto(contenido, nombre)
     texto = _decodificar(contenido, nombre)
-    lector = csv.reader(io.StringIO(texto, newline=""), delimiter=_detectar_delimitador(texto))
+    # strict=True: una comilla sin cerrar genera error en vez de absorber el resto del archivo.
+    lector = csv.reader(
+        io.StringIO(texto, newline=""), delimiter=_detectar_delimitador(texto), strict=True
+    )
 
     try:
         encabezado = next(lector)
@@ -49,28 +62,60 @@ def leer_csv(
         )
 
     filas: list[FilaCsv] = []
-    try:
-        for valores in lector:
-            if not any(v.strip() for v in valores):
-                continue  # Líneas en blanco al final del archivo.
-            fila: dict[str, str] = {}
-            for posicion, columna in enumerate(columnas):
-                if columna not in columnas_obligatorias:
-                    continue  # Las columnas adicionales se ignoran.
-                # Si la fila trae menos valores que el encabezado, lo faltante queda vacío.
-                fila[columna] = valores[posicion].strip() if posicion < len(valores) else ""
-            filas.append(FilaCsv(numero=lector.line_num, valores=fila))
-    except csv.Error as exc:
-        raise ArchivoInvalidoError(
-            f"El archivo '{nombre}' tiene un formato CSV inválido (línea {lector.line_num}).",
-            archivo=nombre,
-        ) from exc
+    while True:
+        # Línea donde empieza el registro: si tiene una comilla sin cerrar, el error se
+        # detecta al final del archivo, pero el problema está aquí.
+        linea_inicio = lector.line_num + 1
+        try:
+            valores = next(lector)
+        except StopIteration:
+            break
+        except csv.Error as exc:
+            raise ArchivoInvalidoError(
+                f"El archivo '{nombre}' tiene un formato CSV inválido en la línea "
+                f"{linea_inicio}. Revise si hay comillas sin cerrar.",
+                archivo=nombre,
+            ) from exc
+        if not any(v.strip() for v in valores):
+            continue  # Líneas en blanco al final del archivo.
+        fila: dict[str, str] = {}
+        for posicion, columna in enumerate(columnas):
+            if columna not in columnas_obligatorias:
+                continue  # Las columnas adicionales se ignoran.
+            # Si la fila trae menos valores que el encabezado, lo faltante queda vacío.
+            fila[columna] = valores[posicion].strip() if posicion < len(valores) else ""
+        filas.append(FilaCsv(numero=lector.line_num, valores=fila))
 
     if not filas:
         raise ArchivoInvalidoError(
             f"El archivo '{nombre}' no contiene registros.", codigo="ARCHIVO_VACIO", archivo=nombre
         )
     return filas
+
+
+def _validar_que_sea_texto(contenido: bytes, nombre: str) -> None:
+    """Rechaza archivos binarios o dañados con un mensaje que explique qué hacer."""
+    for firma, descripcion in FIRMAS_NO_CSV:
+        if contenido.startswith(firma):
+            raise ArchivoInvalidoError(
+                f"El archivo '{nombre}' parece ser {descripcion}, no un CSV. {SUGERENCIA_GUARDAR}",
+                codigo="FORMATO_NO_CSV",
+                archivo=nombre,
+            )
+    if contenido.startswith(BOM_UTF16):
+        raise ArchivoInvalidoError(
+            f"El archivo '{nombre}' está en UTF-16 ('Texto Unicode' de Excel), que no se admite. "
+            f"{SUGERENCIA_GUARDAR}",
+            codigo="CODIFICACION_NO_SOPORTADA",
+            archivo=nombre,
+        )
+    if b"\x00" in contenido:
+        raise ArchivoInvalidoError(
+            f"El archivo '{nombre}' contiene caracteres nulos: puede estar dañado o no ser un "
+            "archivo de texto.",
+            codigo="ARCHIVO_DANADO",
+            archivo=nombre,
+        )
 
 
 def _decodificar(contenido: bytes, nombre: str) -> str:

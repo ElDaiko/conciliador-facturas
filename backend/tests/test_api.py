@@ -122,6 +122,12 @@ def test_archivos_invertidos_indica_columnas_faltantes():
     assert "nit_proveedor" in cuerpo["mensaje"]
 
 
+def test_excel_renombrado_como_csv():
+    respuesta = enviar(facturas=("facturas.csv", b"PK\x03\x04" + b"\x00" * 50))
+    assert respuesta.status_code == 400
+    assert respuesta.json()["codigo"] == "FORMATO_NO_CSV"
+
+
 def test_archivo_demasiado_grande(monkeypatch):
     monkeypatch.setattr(routes, "TAMANO_MAXIMO_ARCHIVO_BYTES", 100)
     respuesta = enviar()
