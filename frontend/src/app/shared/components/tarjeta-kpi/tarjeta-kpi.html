@@ -1,0 +1,10 @@
+<p class="kpi__etiqueta">
+  @if (icono(); as nombre) {
+    <app-icono [nombre]="nombre" [tamano]="18" />
+  }
+  {{ etiqueta() }}
+</p>
+<p class="kpi__valor cifra">{{ valor() }}</p>
+@if (detalle()) {
+  <p class="kpi__detalle">{{ detalle() }}</p>
+}

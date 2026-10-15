@@ -1,0 +1,56 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+  padding: var(--espacio-4);
+  border-radius: var(--radio-md);
+  border-top: 4px solid var(--color-borde);
+  background: var(--color-fondo);
+  box-shadow: var(--sombra-suave);
+  container-type: inline-size; // el valor se ajusta al ancho de la tarjeta, no de la pantalla
+}
+
+:host(.kpi--exito) {
+  border-top-color: var(--color-exito);
+}
+
+:host(.kpi--peligro) {
+  border-top-color: var(--color-peligro);
+}
+
+:host(.kpi--advertencia) {
+  border-top-color: var(--color-advertencia);
+}
+
+.kpi__etiqueta {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  font-size: var(--texto-sm);
+  font-weight: var(--peso-semi);
+  color: var(--color-texto-secundario);
+}
+
+:host(.kpi--exito) app-icono {
+  color: var(--color-exito);
+}
+
+:host(.kpi--peligro) app-icono {
+  color: var(--color-peligro);
+}
+
+:host(.kpi--advertencia) app-icono {
+  color: var(--color-advertencia);
+}
+
+// Las cifras nunca se parten a mitad de número; en tarjetas angostas la letra se reduce.
+.kpi__valor {
+  font-size: clamp(var(--texto-lg), 13cqi, var(--texto-2xl));
+  font-weight: var(--peso-extra);
+  line-height: 1.2;
+}
+
+.kpi__detalle {
+  font-size: var(--texto-sm);
+  color: var(--color-texto-secundario);
+}

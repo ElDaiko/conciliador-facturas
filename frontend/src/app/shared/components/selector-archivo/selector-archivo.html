@@ -1,0 +1,59 @@
+<div
+  class="selector"
+  [class.selector--arrastrando]="arrastrando()"
+  [class.selector--error]="error()"
+  (dragover)="alArrastrar($event)"
+  (dragleave)="arrastrando.set(false)"
+  (drop)="alSoltar($event)"
+>
+  <!-- El input queda oculto visualmente pero es el que recibe foco y teclado. -->
+  <input
+    #campo
+    type="file"
+    class="solo-lector"
+    accept=".csv,text/csv"
+    [id]="id"
+    [disabled]="deshabilitado()"
+    [attr.tabindex]="archivo() ? -1 : null"
+    [attr.aria-describedby]="id + '-ayuda' + (error() ? ' ' + id + '-error' : '')"
+    [attr.aria-invalid]="error() ? true : null"
+    (change)="alCambiar()"
+  />
+
+  @if (archivo(); as seleccionado) {
+    <div class="selector__archivo">
+      <app-icono nombre="archivo" [tamano]="28" />
+      <div class="selector__datos">
+        <p class="selector__etiqueta">{{ etiqueta() }}</p>
+        <p class="selector__nombre">{{ seleccionado.name }}</p>
+        <p class="selector__tamano cifra">{{ tamanoLegible() }}</p>
+      </div>
+      <button
+        appBoton
+        variante="texto"
+        type="button"
+        [disabled]="deshabilitado()"
+        [attr.aria-label]="'Quitar ' + seleccionado.name"
+        (click)="quitar()"
+      >
+        Quitar
+      </button>
+    </div>
+  } @else {
+    <label class="selector__zona" [for]="id">
+      <app-icono nombre="subir" [tamano]="28" />
+      <span class="selector__etiqueta">{{ etiqueta() }}</span>
+      <span class="selector__accion">
+        Seleccionar archivo<span class="selector__arrastre"> o arrastrarlo aquí</span>
+      </span>
+    </label>
+  }
+
+  <p class="selector__ayuda" [id]="id + '-ayuda'">{{ ayuda() }}</p>
+  @if (error()) {
+    <p class="selector__error" [id]="id + '-error'">
+      <app-icono nombre="error" [tamano]="16" />
+      {{ error() }}
+    </p>
+  }
+</div>

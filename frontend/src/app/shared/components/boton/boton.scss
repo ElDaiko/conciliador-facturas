@@ -1,0 +1,66 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacio-2);
+  min-height: var(--objetivo-tactil);
+  padding: var(--espacio-2) var(--espacio-5);
+  border: 2px solid transparent;
+  border-radius: var(--radio-pildora);
+  font-weight: var(--peso-negrita);
+  font-size: var(--texto-md);
+  line-height: 1.2;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    background-color var(--transicion),
+    border-color var(--transicion);
+}
+
+:host(.boton--bloque) {
+  width: 100%;
+}
+
+// Amarillo solo como fondo, con texto oscuro (11.3:1).
+:host(.boton--primario) {
+  background: var(--color-marca);
+  color: var(--color-sobre-marca);
+
+  &:hover:not(:disabled) {
+    background: var(--color-marca-hover);
+  }
+}
+
+:host(.boton--secundario) {
+  background: var(--color-fondo);
+  border-color: var(--color-borde-control);
+  color: var(--color-texto);
+
+  &:hover:not(:disabled) {
+    background: var(--color-fondo-alterno);
+  }
+}
+
+:host(.boton--texto) {
+  padding-inline: var(--espacio-3);
+  background: transparent;
+  color: var(--color-texto);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+
+  &:hover:not(:disabled) {
+    background: var(--color-fondo-alterno);
+  }
+}
+
+// Deshabilitado: se distingue por opacidad y cursor, no solo por color.
+:host(:disabled) {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+@media (forced-colors: active) {
+  :host {
+    border-color: ButtonText;
+  }
+}

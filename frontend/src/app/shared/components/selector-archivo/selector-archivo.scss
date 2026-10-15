@@ -1,0 +1,104 @@
+@use 'mixins' as *;
+
+.selector {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+}
+
+.selector__zona,
+.selector__archivo {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+  min-height: 5.5rem;
+  padding: var(--espacio-4);
+  border-radius: var(--radio-md);
+  background: var(--color-fondo);
+}
+
+.selector__zona {
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  border: 2px dashed var(--color-borde-control);
+  cursor: pointer;
+  transition:
+    background-color var(--transicion),
+    border-color var(--transicion);
+
+  &:hover {
+    background: var(--color-fondo-alterno);
+  }
+}
+
+// El foco del input oculto se muestra en su etiqueta visible.
+input:focus-visible + .selector__zona {
+  @include foco-visible;
+}
+
+input:disabled + .selector__zona {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.selector--arrastrando .selector__zona {
+  border-style: solid;
+  border-color: var(--color-texto);
+  background: var(--color-fondo-alterno);
+}
+
+.selector--error .selector__zona {
+  border-color: var(--color-peligro);
+}
+
+.selector__archivo {
+  border: 2px solid var(--color-exito);
+}
+
+.selector__archivo > app-icono {
+  color: var(--color-exito);
+}
+
+.selector__datos {
+  flex: 1;
+  min-width: 0;
+}
+
+.selector__etiqueta {
+  font-weight: var(--peso-negrita);
+}
+
+.selector__nombre {
+  overflow-wrap: anywhere;
+}
+
+.selector__accion {
+  color: var(--color-texto-secundario);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.selector__tamano,
+.selector__ayuda {
+  font-size: var(--texto-sm);
+  color: var(--color-texto-secundario);
+}
+
+// En móvil no se arrastra: solo se muestra "Seleccionar archivo".
+.selector__arrastre {
+  display: none;
+
+  @include desde(tablet) {
+    display: inline;
+  }
+}
+
+.selector__error {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  font-size: var(--texto-sm);
+  font-weight: var(--peso-semi);
+  color: var(--color-peligro);
+}
