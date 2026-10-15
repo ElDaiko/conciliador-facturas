@@ -1,0 +1,568 @@
+{
+  "info": {
+    "_postman_id": "490fe0ed-a862-5315-b86b-89359ffff153",
+    "name": "Conciliador de facturas y retenciones",
+    "description": "Pruebas de la API del conciliador.\n\n**Antes de ejecutar:** en Postman, *Settings → General → Working directory*, seleccione la raíz del repositorio (las solicitudes usan rutas relativas como `data/facturas.csv`). Elija el entorno *Local* (backend en 8000) o *Docker* (nginx en 8080).\n\nPor línea de comandos, desde la raíz del repositorio: `npx newman run postman/conciliador.postman_collection.json -e postman/local.postman_environment.json`.\n\nEl límite de 5 MB (HTTP 413) se prueba en `backend/tests/test_api.py` para no versionar un archivo grande.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Sistema",
+      "item": [
+        {
+          "name": "Estado del servicio",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Servicio en línea\", () => pm.expect(pm.response.json().estado).to.eql(\"ok\"));",
+                  "pm.test(\"Informa la versión\", () => pm.expect(pm.response.json().version).to.match(/^\\d+\\.\\d+\\.\\d+$/));",
+                  "pm.test(\"Cabecera X-Content-Type-Options\", () => pm.expect(pm.response.headers.get(\"X-Content-Type-Options\")).to.eql(\"nosniff\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "health"
+              ]
+            },
+            "description": "Verifica que la API esté disponible."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Conciliación con los archivos de prueba",
+      "item": [
+        {
+          "name": "Conciliar muestra (50 facturas)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json();",
+                  "const resumen = r.resumen;",
+                  "pm.test(\"50 registros de factura (48 únicos)\", () => {",
+                  "  pm.expect(resumen.total_registros).to.eql(50);",
+                  "  pm.expect(resumen.facturas_unicas).to.eql(48);",
+                  "});",
+                  "pm.test(\"32 correctas y 18 con inconsistencia\", () => {",
+                  "  pm.expect(resumen.correctas).to.eql(32);",
+                  "  pm.expect(resumen.con_inconsistencia).to.eql(18);",
+                  "});",
+                  "pm.test(\"Montos: sin contabilizar, no en firme y diferencias\", () => {",
+                  "  pm.expect(resumen.monto_sin_contabilizar).to.eql(\"11521700.00\");",
+                  "  pm.expect(resumen.monto_no_en_firme).to.eql(\"5572350.00\");",
+                  "  pm.expect(resumen.monto_diferencias_calculo).to.eql(\"106500.00\");",
+                  "});",
+                  "pm.test(\"Conteo por causa: inconsistencias antes que advertencias\", () => {",
+                  "  const tipos = resumen.por_causa.map(c => c.tipo);",
+                  "  pm.expect(tipos.lastIndexOf(\"INCONSISTENCIA\")).to.be.below(tipos.indexOf(\"ADVERTENCIA\"));",
+                  "  const conteo = Object.fromEntries(resumen.por_causa.map(c => [c.codigo, c.cantidad]));",
+                  "  pm.expect(conteo).to.include({ DUPLICADA: 4, SIN_CONTABILIZAR: 4, CAMPO_VACIO: 3, TOTAL_DIFERENTE: 3, ESTADO_NO_CONTABILIZADO: 3, IVA_DIFERENTE: 2, VALOR_CONTABLE_DIFERENTE: 2 });",
+                  "});",
+                  "pm.test(\"Detalle con una fila por registro\", () => pm.expect(r.detalle).to.have.length(50));",
+                  "pm.test(\"Trazabilidad de FAC-0006: IVA reportado vs esperado\", () => {",
+                  "  const fac = r.detalle.find(d => d.id_factura === \"FAC-0006\");",
+                  "  pm.expect(fac.estado).to.eql(\"CON_INCONSISTENCIA\");",
+                  "  pm.expect(fac.causas).to.have.length(1);",
+                  "  pm.expect(fac.causas[0]).to.include({ codigo: \"IVA_DIFERENTE\", valor_reportado: \"215000.00\", valor_esperado: \"190000.00\", diferencia: \"25000.00\" });",
+                  "  pm.expect(fac.calculos.total_esperado).to.eql(\"3990000.00\");",
+                  "});",
+                  "pm.test(\"Duplicadas: se marcan todas las ocurrencias\", () => {",
+                  "  const dup = r.detalle.filter(d => d.causas.some(c => c.codigo === \"DUPLICADA\")).map(d => d.id_factura).sort();",
+                  "  pm.expect(dup).to.eql([\"FAC-0004\", \"FAC-0004\", \"FAC-0015\", \"FAC-0015\"]);",
+                  "});",
+                  "pm.test(\"Sin registro contable: FAC-0007, 0021, 0034 y 0042\", () => {",
+                  "  const sin = r.detalle.filter(d => d.causas.some(c => c.codigo === \"SIN_CONTABILIZAR\")).map(d => d.id_factura);",
+                  "  pm.expect(sin).to.eql([\"FAC-0007\", \"FAC-0021\", \"FAC-0034\", \"FAC-0042\"]);",
+                  "});",
+                  "pm.test(\"Una factura correcta no tiene causas\", () => {",
+                  "  const fac = r.detalle.find(d => d.id_factura === \"FAC-0008\");",
+                  "  pm.expect(fac.estado).to.eql(\"CORRECTA\");",
+                  "  pm.expect(fac.causas).to.be.empty;",
+                  "});",
+                  "pm.test(\"Todos los registros contables tienen factura\", () => pm.expect(r.registros_contables_sin_factura).to.be.empty);",
+                  "pm.test(\"Tolerancia informada\", () => pm.expect(r.tolerancia).to.eql(\"1.00\"));",
+                  "pm.test(\"Respuesta financiera no se guarda en caché\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.eql(\"no-store\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/conciliaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "conciliaciones"
+              ]
+            },
+            "description": "Flujo principal: debe producir 50 facturas, 32 correctas y 18 con inconsistencia.",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "facturas",
+                  "type": "file",
+                  "src": "data/facturas.csv"
+                },
+                {
+                  "key": "contabilidad",
+                  "type": "file",
+                  "src": "data/contabilidad.csv"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Formatos aceptados",
+      "item": [
+        {
+          "name": "CSV con punto y coma",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const resumen = pm.response.json().resumen;",
+                  "pm.test(\"Procesa las 10 facturas: 7 correctas y 3 con inconsistencia\", () => {",
+                  "  pm.expect(resumen.total_registros).to.eql(10);",
+                  "  pm.expect(resumen.correctas).to.eql(7);",
+                  "  pm.expect(resumen.con_inconsistencia).to.eql(3);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/conciliaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "conciliaciones"
+              ]
+            },
+            "description": "Separador `;` como el que exporta Excel en español.",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "facturas",
+                  "type": "file",
+                  "src": "data/casos-borde/facturas_punto_y_coma.csv"
+                },
+                {
+                  "key": "contabilidad",
+                  "type": "file",
+                  "src": "data/contabilidad.csv"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Valores inválidos en algunas filas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200: las filas malas no rechazan el archivo\", () => pm.response.to.have.status(200));",
+                  "const detalle = pm.response.json().detalle;",
+                  "const estado = id => detalle.find(d => d.id_factura === id);",
+                  "pm.test(\"FAC-0001 correcta (tarifas 0% y 4% normalizadas)\", () => pm.expect(estado(\"FAC-0001\").estado).to.eql(\"CORRECTA\"));",
+                  "pm.test(\"Fecha, monto en letras y monto negativo marcados como VALOR_INVALIDO\", () => {",
+                  "  for (const id of [\"FAC-0002\", \"FAC-0003\", \"FAC-0005\"]) {",
+                  "    pm.expect(estado(id).causas.map(c => c.codigo), id).to.include(\"VALOR_INVALIDO\");",
+                  "  }",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/conciliaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "conciliaciones"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "facturas",
+                  "type": "file",
+                  "src": "data/casos-borde/facturas_valores_invalidos.csv"
+                },
+                {
+                  "key": "contabilidad",
+                  "type": "file",
+                  "src": "data/contabilidad.csv"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Errores",
+      "item": [
+        {
+          "name": "Falta una columna obligatoria (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "const cuerpo = pm.response.json();",
+                  "pm.test(\"Código de error COLUMNAS_FALTANTES\", () => pm.expect(cuerpo.codigo).to.eql(\"COLUMNAS_FALTANTES\"));",
+                  "pm.test(\"Mensaje en español para el usuario\", () => pm.expect(cuerpo.mensaje).to.be.a(\"string\").and.not.empty);",
+                  "pm.test(\"Indica la columna faltante\", () => pm.expect(cuerpo.mensaje).to.include(\"tarifa_iva\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/conciliaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "conciliaciones"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "facturas",
+                  "type": "file",
+                  "src": "data/casos-borde/facturas_sin_columna_tarifa_iva.csv"
+                },
+                {
+                  "key": "contabilidad",
+                  "type": "file",
+                  "src": "data/contabilidad.csv"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Archivo vacío (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "const cuerpo = pm.response.json();",
+                  "pm.test(\"Código de error ARCHIVO_VACIO\", () => pm.expect(cuerpo.codigo).to.eql(\"ARCHIVO_VACIO\"));",
+                  "pm.test(\"Mensaje en español para el usuario\", () => pm.expect(cuerpo.mensaje).to.be.a(\"string\").and.not.empty);",
+                  "pm.test(\"Indica el archivo\", () => pm.expect(cuerpo.archivo).to.eql(\"contabilidad_vacio.csv\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/conciliaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "conciliaciones"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "facturas",
+                  "type": "file",
+                  "src": "data/facturas.csv"
+                },
+                {
+                  "key": "contabilidad",
+                  "type": "file",
+                  "src": "data/casos-borde/contabilidad_vacio.csv"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Extensión distinta a .csv (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "const cuerpo = pm.response.json();",
+                  "pm.test(\"Código de error EXTENSION_INVALIDA\", () => pm.expect(cuerpo.codigo).to.eql(\"EXTENSION_INVALIDA\"));",
+                  "pm.test(\"Mensaje en español para el usuario\", () => pm.expect(cuerpo.mensaje).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/conciliaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "conciliaciones"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "facturas",
+                  "type": "file",
+                  "src": "data/casos-borde/facturas.txt"
+                },
+                {
+                  "key": "contabilidad",
+                  "type": "file",
+                  "src": "data/contabilidad.csv"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Archivos invertidos (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "const cuerpo = pm.response.json();",
+                  "pm.test(\"Código de error COLUMNAS_FALTANTES\", () => pm.expect(cuerpo.codigo).to.eql(\"COLUMNAS_FALTANTES\"));",
+                  "pm.test(\"Mensaje en español para el usuario\", () => pm.expect(cuerpo.mensaje).to.be.a(\"string\").and.not.empty);",
+                  "pm.test(\"Señala el archivo de contabilidad en el campo de facturas\", () => pm.expect(cuerpo.archivo).to.eql(\"contabilidad.csv\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/conciliaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "conciliaciones"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "facturas",
+                  "type": "file",
+                  "src": "data/contabilidad.csv"
+                },
+                {
+                  "key": "contabilidad",
+                  "type": "file",
+                  "src": "data/facturas.csv"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Falta el archivo de contabilidad (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 422\", () => pm.response.to.have.status(422));",
+                  "const cuerpo = pm.response.json();",
+                  "pm.test(\"Código de error SOLICITUD_INVALIDA\", () => pm.expect(cuerpo.codigo).to.eql(\"SOLICITUD_INVALIDA\"));",
+                  "pm.test(\"Mensaje en español para el usuario\", () => pm.expect(cuerpo.mensaje).to.be.a(\"string\").and.not.empty);",
+                  "pm.test(\"Indica qué archivo falta\", () => pm.expect(cuerpo.mensaje).to.include(\"contabilidad\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/conciliaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "conciliaciones"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "facturas",
+                  "type": "file",
+                  "src": "data/facturas.csv"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Método no permitido (405)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 405\", () => pm.response.to.have.status(405));",
+                  "const cuerpo = pm.response.json();",
+                  "pm.test(\"Código de error HTTP_405\", () => pm.expect(cuerpo.codigo).to.eql(\"HTTP_405\"));",
+                  "pm.test(\"Mensaje en español para el usuario\", () => pm.expect(cuerpo.mensaje).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/conciliaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "conciliaciones"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Ruta inexistente (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));",
+                  "const cuerpo = pm.response.json();",
+                  "pm.test(\"Código de error HTTP_404\", () => pm.expect(cuerpo.codigo).to.eql(\"HTTP_404\"));",
+                  "pm.test(\"Mensaje en español para el usuario\", () => pm.expect(cuerpo.mensaje).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/no-existe",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "no-existe"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
