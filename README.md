@@ -30,6 +30,8 @@ Prototipo web que cruza el archivo de **facturas de proveedores** con el de **re
 - [Estructura del repositorio](#estructura-del-repositorio)
 - [Backend](#backend)
 - [Frontend](#frontend)
+- [Docker (opcional)](#docker-opcional)
+- [Integración continua](#integración-continua)
 - [Control de versiones](#control-de-versiones)
 
 ## Requisitos
@@ -204,8 +206,7 @@ Fuera del alcance de un prototipo de 4–5 horas; quedan como siguientes pasos:
 - **Asiento contable completo** (gasto, IVA descontable, retención por pagar, proveedores): el archivo de muestra trae una representación simplificada.
 - **CSV con coma decimal** (`1.234,56`): se aceptan `,` y `;` como separadores, pero solo punto decimal.
 - **Paginación** en la tabla y procesamiento de archivos grandes en segundo plano.
-- **Autenticación y autorización**, HTTPS y despliegue.
-- **Docker** y **CI**: no incluidos en esta versión (ver [Control de versiones](#control-de-versiones)).
+- **Autenticación y autorización**, HTTPS y despliegue en un entorno real.
 
 ## Uso de inteligencia artificial
 
@@ -218,7 +219,9 @@ Se usó IA generativa. El detalle de en qué partes y con qué propósito está 
 ├── backend/     API REST en Python (FastAPI)
 ├── frontend/    Aplicación web en Angular
 ├── data/        Archivos CSV de prueba (casos-borde/ para probar errores)
-└── docs/        Decisiones (ADR), declaración de IA y presentación
+├── docs/        Decisiones (ADR), declaración de IA y presentación
+├── .github/     Integración continua (GitHub Actions)
+└── docker-compose.yml   Ejecución opcional con Docker
 ```
 
 ## Backend
@@ -455,8 +458,55 @@ frontend/src/app/
 - **Objetivos táctiles** de al menos 44 × 44 px, tamaños en `rem` (respeta el tamaño de letra del usuario), cifras con `tabular-nums`, soporte de `prefers-reduced-motion` y de modo de alto contraste (`forced-colors`).
 - **Validación automática:** ESLint con `templateAccessibility` de angular-eslint y pruebas unitarias que verifican roles, etiquetas y textos de estado.
 
+## Docker (opcional)
+
+La forma oficial de ejecutar la solución es la del [Inicio rápido](#inicio-rápido). Docker es una alternativa que levanta todo con un solo comando y sirve el frontend compilado para producción.
+
+```bash
+docker compose up --build      # http://localhost:8080
+docker compose down            # detiene y elimina los contenedores
+```
+
+| Servicio | Imagen base | Qué hace |
+|---|---|---|
+| `backend` | `python:3.14-slim` | API FastAPI. Corre sin root, con *healthcheck* sobre `/api/health`. No expone puertos al exterior. |
+| `frontend` | `node:24-alpine` (build) → `nginxinc/nginx-unprivileged:1.29-alpine` | nginx sirve Angular y reenvía `/api` al backend (mismo papel que `proxy.conf.json` en desarrollo). Escucha en el puerto 8080, sin root. |
+
+El frontend espera a que el backend esté sano antes de arrancar.
+
+**Requisito:** un motor de Docker con Compose v2 (Docker Desktop, Colima, Rancher Desktop u otro). Probado con Colima 0.10.3, Docker 29.5 y Compose 5.6 en macOS.
+
+<details>
+<summary>Instalación con Colima en macOS y solución de problemas</summary>
+
+```bash
+brew install colima docker docker-compose
+colima start --cpu 2 --memory 4
+```
+
+- **`docker: 'compose' is not a docker command`**: el plugin de Homebrew debe registrarse en `~/.docker/config.json`:
+  ```json
+  { "cliPluginsExtraDirs": ["/opt/homebrew/lib/docker/cli-plugins"] }
+  ```
+- **`Cannot connect to the Docker daemon`**: la máquina virtual no está corriendo; ejecute `colima start` (verifique con `colima status`).
+- **El puerto 8080 está ocupado**: cambie `'8080:8080'` por `'8081:8080'` en `docker-compose.yml` y abra http://localhost:8081.
+- **Al terminar**: `colima stop` libera la memoria de la máquina virtual.
+
+</details>
+
+## Integración continua
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) se ejecuta en GitHub Actions en cada *push* o *pull request* a `main`:
+
+| Trabajo | Pasos |
+|---|---|
+| Backend (Python 3.12 y 3.14) | `ruff check`, `ruff format --check`, `pytest` |
+| Frontend (Node 24) | `npm ci`, `lint`, `format:check`, `test`, `build` |
+
+Python 3.12 es la versión mínima declarada; 3.14 es la de desarrollo. Los pasos se verificaron en local (incluido Python 3.13). El workflow se ejecutará en GitHub cuando el repositorio se publique.
+
 ## Control de versiones
 
 - Desarrollo **trunk-based** sobre `main` con commits pequeños según [Conventional Commits](https://www.conventionalcommits.org/es/v1.0.0/) (`feat`, `fix`, `test`, `docs`, `refactor`, `build`, `chore`).
-- Versión publicada con la etiqueta **`v1.0.0`**; los cambios están en [`CHANGELOG.md`](CHANGELOG.md).
+- Versiones etiquetadas: **`v1.0.0`** (entrega base) y **`v1.1.0`** (Docker y CI opcionales); los cambios están en [`CHANGELOG.md`](CHANGELOG.md).
 - Se eligió trunk-based en lugar de GitFlow porque es un proyecto de un solo desarrollador y la prueba no exige un flujo de ramas (ver [ADR 0001](docs/adr/0001-monorepo-y-trunk-based.md)).

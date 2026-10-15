@@ -18,6 +18,7 @@
 | Pruebas | Generación de las pruebas automatizadas (60 de backend y 49 de frontend) y de los archivos de `data/casos-borde/` | Verificar las reglas, los errores y la correspondencia entre lo procesado y lo mostrado |
 | Verificación visual | Revisión en el navegador (escritorio, 320 px y 375 px), navegación con teclado y árbol de accesibilidad | Detectar y corregir problemas de diseño responsive y de accesibilidad |
 | Documentación | Redacción del README, los ADR, el CHANGELOG y esta declaración | Documentar instalación, reglas, supuestos y decisiones |
+| Docker e integración continua | Generación de los Dockerfile, la configuración de nginx, `docker-compose.yml` y el workflow de GitHub Actions; instalación y prueba con Colima | Ofrecer una ejecución alternativa con un solo comando y verificación automática en cada cambio |
 | Presentación | Generación de la presentación de 5 diapositivas a partir de los resultados reales de la muestra | Comunicar la propuesta al equipo funcional |
 
 ## Decisiones tomadas por el candidato
