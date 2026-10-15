@@ -1,54 +1,86 @@
 # Conciliador de facturas y retenciones
 
-Prototipo web que cruza el archivo de **facturas de proveedores** con el de **registros contables**, aplica reglas contables y tributarias básicas y presenta un resumen y un detalle de las facturas correctas y de las que tienen inconsistencias, con la causa de cada una.
+Prototipo web que cruza el archivo de **facturas de proveedores** con el de **registros contables**, aplica reglas contables y tributarias, y muestra un resumen y el detalle de cada factura con la causa de cada inconsistencia.
 
 > Prueba técnica — Analista III, Gerencia de Evolución Contable y Tributaria.
->
 > Prototipo con identidad visual inspirada en Bancolombia; no es un producto oficial.
 
 ## Entregables
 
-| # | Entregable solicitado | Ubicación |
+| Entregable | Ubicación |
+|---|---|
+| Código fuente | [`backend/`](backend/) (Python) y [`frontend/`](frontend/) (Angular) |
+| Archivos de prueba | [`data/`](data/) (muestra entregada) y [`data/casos-borde/`](data/casos-borde/) (errores) |
+| Colección de Postman | [`postman/`](postman/) |
+| Presentación ejecutiva (5 diapositivas) | [`docs/presentacion/presentacion-conciliador.pptx`](docs/presentacion/presentacion-conciliador.pptx) |
+| Declaración de uso de IA | [`docs/declaracion-ia.md`](docs/declaracion-ia.md) |
+
+## Stack
+
+### Backend
+
+| Tecnología | Versión | Uso |
 |---|---|---|
-| 1 | Código fuente del frontend y del backend | [`frontend/`](frontend/) (Angular) y [`backend/`](backend/) (Python, FastAPI) |
-| 2 | README con instalación y ejecución | Este archivo |
-| 3 | Archivos de prueba | [`data/`](data/) (muestra entregada) y [`data/casos-borde/`](data/casos-borde/) (errores) |
-| 4 | Presentación ejecutiva (5 diapositivas) | [`docs/presentacion/`](docs/presentacion/) |
-| 5 | Declaración de uso de IA generativa | [`docs/declaracion-ia.md`](docs/declaracion-ia.md) |
+| Python | 3.14 (mínima 3.12) | Lenguaje |
+| FastAPI · uvicorn · python-multipart | 0.143 · 0.54 · 0.0.32 | API REST, servidor y recepción de archivos |
+| pytest · httpx2 · ruff | 9.1 · 2.13 · 0.17 | Pruebas y lint (solo desarrollo) |
 
-## Contenido
+### Frontend
 
-- [Requisitos](#requisitos)
-- [Inicio rápido](#inicio-rápido)
-- [Trazabilidad con el enunciado](#trazabilidad-con-el-enunciado)
-- [Reglas de negocio](#reglas-de-negocio)
-- [Resultado con los archivos de prueba](#resultado-con-los-archivos-de-prueba)
-- [Supuestos](#supuestos)
-- [Decisiones técnicas](#decisiones-técnicas)
-- [Funcionalidades no incluidas](#funcionalidades-no-incluidas)
-- [Uso de inteligencia artificial](#uso-de-inteligencia-artificial)
-- [Estructura del repositorio](#estructura-del-repositorio)
-- [Backend](#backend)
-- [Frontend](#frontend)
-- [Docker (opcional)](#docker-opcional)
-- [Integración continua](#integración-continua)
-- [Control de versiones](#control-de-versiones)
+| Tecnología | Versión | Uso |
+|---|---|---|
+| Angular | 22.2 | Componentes standalone, signals, sin `zone.js` |
+| SCSS · Nunito Sans (npm) | — · 5.3 | Estilos propios con tokens; tipografía sin CDN |
+| Vitest · Playwright · ESLint · Prettier | 4.1 · 1.64 · 10 · 3.9 | Pruebas unitarias, E2E, lint y formato (solo desarrollo) |
+
+### Herramientas
+
+Postman (pruebas de la API), Docker Compose (opcional) y GitHub Actions (CI). Las dependencias tienen versiones fijas en `backend/requirements*.txt` y `frontend/package-lock.json`.
+
+## Arquitectura
+
+```
+Navegador → Angular (4200) ──/api──▶ proxy ──▶ FastAPI (8000) → lector CSV → reglas → resumen + detalle (JSON)
+```
+
+### Backend
+
+```
+backend/app/
+├── api/       Endpoints (POST /api/conciliaciones, GET /api/health) y contrato JSON (Pydantic)
+├── domain/    Modelos, catálogo de causas, reglas (funciones puras) y conciliador
+├── infra/     Lectura defensiva del CSV (codificación, separador, columnas)
+└── core/      Configuración (tolerancia, columnas, estados) y errores
+```
+
+Sin base de datos: cada solicitud se procesa en memoria. Documentación interactiva en http://localhost:8000/docs (Swagger).
+
+### Frontend
+
+```
+frontend/src/app/
+├── core/                    Modelos del contrato de la API, servicio HTTP y layout
+├── features/conciliacion/   Página, store (signals), carga, resumen, filtros, tabla y detalle
+└── shared/                  Componentes reutilizables (botón, selector de archivo, KPI, insignia, alerta) y pipes
+```
+
+Solo la página conoce el store; los demás componentes reciben datos y emiten eventos. Interfaz **mobile first** y accesible (WCAG 2.2 AA): contraste verificado, estados con ícono y texto (nunca solo color), navegación por teclado y soporte de lectores de pantalla.
 
 ## Requisitos
 
-| Herramienta | Versión probada | Mínima |
+| Herramienta | Versión | Necesaria para |
 |---|---|---|
-| Python | 3.14.7 | 3.12 |
-| Node.js | 24.19.0 | 22 LTS |
-| npm | 11.17.0 | 10 |
-| Angular CLI | 22.2 (incluida en `devDependencies`, no requiere instalación global) | — |
-| Git | 2.50 | — |
+| Python | 3.12 o superior | Backend |
+| Node.js | 22.22.3+ o 24.15+ | Frontend (Angular 22 lo exige; `engines` lo valida) |
+| npm | 10 o superior (11 recomendado) | Frontend; con npm 11 se aplican las protecciones de `.npmrc` |
+| Docker con Compose v2 | — | Opcional |
+| Postman | — | Opcional, para probar la API |
 
-No se requiere base de datos, credenciales, variables de entorno ni acceso a sistemas corporativos. Todas las herramientas son de libre acceso y todos los datos son ficticios.
+No se requiere base de datos, credenciales ni variables de entorno. Todos los datos son ficticios.
 
-## Inicio rápido
+## Cómo levantarlo
 
-**Terminal 1 — backend** (desde la raíz del repositorio):
+### Backend (terminal 1)
 
 ```bash
 cd backend
@@ -57,7 +89,9 @@ python3 -m venv .venv
 .venv/bin/uvicorn app.main:app --port 8000
 ```
 
-**Terminal 2 — frontend** (desde la raíz del repositorio):
+En Windows, reemplace `.venv/bin/` por `.venv\Scripts\`.
+
+### Frontend (terminal 2)
 
 ```bash
 cd frontend
@@ -65,457 +99,142 @@ npm ci
 npm start
 ```
 
-Abra http://localhost:4200, cargue `data/facturas.csv` y `data/contabilidad.csv` y presione **Conciliar archivos**. Debe obtener **50 facturas: 32 correctas y 18 con inconsistencia** (ver [Resultado con los archivos de prueba](#resultado-con-los-archivos-de-prueba)).
+### Probar
 
-> En Windows, reemplace `.venv/bin/` por `.venv\Scripts\`.
+1. Abra http://localhost:4200, cargue `data/facturas.csv` y `data/contabilidad.csv` y presione **Conciliar archivos**. Debe ver **50 facturas: 32 correctas y 18 con inconsistencia**.
+2. **API con Postman:** importe `postman/conciliador.postman_collection.json` y el entorno `postman/local.postman_environment.json`. En *Settings → General → Working directory* elija la raíz del repositorio (las solicitudes cargan los archivos de `data/`). Ejecute la colección: 11 solicitudes con 47 verificaciones, incluidos los casos de error.
+   Sin Postman, desde la raíz: `npx newman run postman/conciliador.postman_collection.json -e postman/local.postman_environment.json`.
 
-## Trazabilidad con el enunciado
-
-| Requisito del enunciado | Implementación | Verificación |
-|---|---|---|
-| Regla 1: IVA esperado = base gravable × tarifa de IVA | `backend/app/domain/reglas.py` → `validar_iva` | `tests/test_reglas.py`, `tests/test_muestra_real.py` |
-| Regla 2: total = base gravable + IVA − retención | `reglas.py` → `total_esperado`, `validar_total` | Ídem |
-| Regla 3: facturas duplicadas y sin registro contable | `reglas.py` → `validar_duplicado`, `validar_contabilidad` | Ídem |
-| Regla 4: clasificar como Correcta o Con inconsistencia e indicar la causa | `domain/conciliador.py` → `_evaluar_factura`; catálogo en `domain/causas.py` | Ídem |
-| Regla 5: resumen con el total de facturas y el número de inconsistencias | `conciliador.py` → `_resumir`; tarjetas del resumen en el frontend | `test_muestra_real.py`, `conciliacion.page.spec.ts` |
-| API REST en Python (FastAPI, Flask o similar) | FastAPI: `backend/app/main.py`, `api/routes.py` | `tests/test_api.py` |
-| Recibir los archivos CSV y leer su información | `POST /api/conciliaciones` (multipart) + `infra/lector_csv.py` | `tests/test_lector_csv.py`, `test_api.py` |
-| Servicio que entregue el resumen y el detalle | Respuesta `{ resumen, detalle, ... }` ([API](#api)) | `test_api.py` |
-| Manejo básico de errores de archivo y campos obligatorios | Errores 400/413/422 en español; causa `CAMPO_VACIO` por fila | `test_api.py`, `data/casos-borde/` |
-| Pantalla para cargar los archivos y ejecutar el procesamiento | `features/conciliacion/carga-archivos/` | `conciliacion.page.spec.ts` |
-| Resumen con el total de facturas y las inconsistencias | `resumen-conciliacion/` | Ídem |
-| Tabla de resultados con filtro por estado | `tabla-resultados/`, `filtros-resultados/` | Ídem |
-| Consumir la API de Python desde Angular | `core/services/conciliacion-api.service.ts` | `conciliacion-api.service.spec.ts` |
-| Mensajes básicos de carga y error | `indicador-carga`, `alerta` | `conciliacion.page.spec.ts` |
-| README con versiones, dependencias, comandos y configuración | Este archivo | Clon limpio siguiendo solo este README |
-| Supuestos, decisiones y funcionalidades no completadas documentados | [Supuestos](#supuestos), [Decisiones](#decisiones-técnicas), [No incluidas](#funcionalidades-no-incluidas) | — |
-| Sin información real, credenciales ni datos sensibles | Solo datos ficticios; sin secretos en el código | — |
-
-Lo que va **más allá del enunciado** se identifica como tal en las reglas (columna *Origen*) y en las secciones de backend y frontend.
-
-## Reglas de negocio
-
-Cada factura se clasifica como **Correcta** o **Con inconsistencia**. Una factura puede tener varias causas a la vez, y cada causa muestra el valor reportado, el valor esperado y la diferencia. Se aplica una tolerancia de **±$1** en todas las comparaciones de valores.
-
-**Origen:** *Enunciado* = regla explícita de la prueba · *Derivada del caso* = no está entre las 5 reglas, pero se desprende de la descripción del caso · *Adicional* = validación de robustez propia.
-
-| Código | Causa | Regla | Origen |
-|---|---|---|---|
-| `IVA_DIFERENTE` | IVA mal calculado | `valor_iva` ≠ `base_gravable × tarifa_iva` | Enunciado (regla 1) |
-| `TOTAL_DIFERENTE` | Total no cuadra | `total_factura` ≠ `base + IVA esperado − retención esperada` | Enunciado (regla 2) |
-| `DUPLICADA` | Factura duplicada | El `id_factura` aparece más de una vez; se marcan todas las ocurrencias | Enunciado (regla 3) |
-| `SIN_CONTABILIZAR` | Sin registro contable | El `id_factura` no existe en contabilidad | Enunciado (regla 3) |
-| `CAMPO_VACIO` | Campo obligatorio vacío | Cualquiera de los 10 campos mínimos está vacío; los cálculos que dependen de él se omiten | Enunciado (manejo de campos obligatorios; los datos incluyen *campos vacíos*) |
-| `ESTADO_NO_CONTABILIZADO` | Contabilización no está en firme | El registro contable tiene un estado distinto a `Contabilizada` (por ejemplo, `Pendiente`) | Derivada del caso (*"estados de contabilización"*) |
-| `VALOR_CONTABLE_DIFERENTE` | Valor contabilizado diferente | La suma de débitos del `id_factura` ≠ `total_factura` | Derivada del caso (*"diferencias en valores"*) |
-| `RETENCION_DIFERENTE` | Retención mal calculada | `valor_retencion` ≠ `base_gravable × tarifa_retencion` | Derivada del caso (*conciliador de facturas y retenciones*) |
-| `VALOR_INVALIDO` | Valor con formato inválido | Montos no numéricos o negativos, o fechas con formato distinto a `AAAA-MM-DD` | Adicional |
-| `PARTIDA_DESCUADRADA` | Débitos y créditos no cuadran | La suma de débitos ≠ la suma de créditos del `id_factura` | Adicional |
-| `REGISTRO_CONTABLE_INCOMPLETO` | Registro contable incompleto | El registro contable tiene campos vacíos o inválidos | Adicional |
-
-**Advertencias** (adicionales): se informan para revisión, pero **no cambian la clasificación**.
-
-| Código | Advertencia | Regla |
-|---|---|---|
-| `LINEA_CONTABLE_EN_CERO` | Línea contable sin valor | Línea con débito y crédito en 0 |
-| `PERIODO_POSTERIOR` | Contabilizada en periodo posterior | El mes de contabilización es posterior al de la factura (revisar corte) |
-| `FECHA_CONTABLE_ANTERIOR` | Contabilizada antes de la fecha de factura | `fecha_contabilizacion` < `fecha_factura` |
-
-## Resultado con los archivos de prueba
-
-La prueba no entrega un resultado esperado. Este es el que produce la solución con `data/facturas.csv` y `data/contabilidad.csv`, **según las reglas y los supuestos documentados**:
-
-| Indicador | Valor |
-|---|---|
-| Registros de factura | **50** (48 `id_factura` únicos) |
-| Correctas | **32** |
-| Con inconsistencia | **18** |
-| Con advertencias | 11 (no cambian la clasificación) |
-| Monto sin contabilizar | $11.521.700 (4 facturas) |
-| Monto con contabilización no en firme | $5.572.350 (3 facturas) |
-| Diferencias de cálculo (IVA + total) | $106.500 |
-
-| Fila | Factura | Causas |
-|---|---|---|
-| 5 | FAC-0004 | Duplicada |
-| 7 | FAC-0006 | IVA mal calculado (reporta $215.000, esperado $190.000) |
-| 8 | FAC-0007 | Sin registro contable |
-| 10 | FAC-0009 | Total no cuadra (+$50.000) |
-| 12 | FAC-0011 | Contabilización en estado Pendiente |
-| 14 | FAC-0013 | Campo vacío: nit_proveedor |
-| 16 | FAC-0015 | Duplicada |
-| 19 | FAC-0018 | IVA mal calculado (reporta $645.500, esperado $655.500) |
-| 22 | FAC-0021 | Sin registro contable |
-| 24 | FAC-0023 | Total no cuadra (−$20.000) |
-| 28 | FAC-0027 | Contabilización en estado Pendiente |
-| 30 | FAC-0029 | Campo vacío: concepto |
-| 35 | FAC-0034 | Sin registro contable |
-| 37 | FAC-0036 | Total no cuadra (+$1.500) |
-| 40 | FAC-0039 | Contabilización en estado Pendiente |
-| 43 | FAC-0042 | Campo vacío: fecha_factura · Sin registro contable |
-| 50 | FAC-0004 | Duplicada · Valor contabilizado diferente |
-| 51 | FAC-0015 | Duplicada · Valor contabilizado diferente |
-
-La prueba automatizada `backend/tests/test_muestra_real.py` verifica este resultado.
-
-**Cómo cambia el resultado con otras interpretaciones** (calculado con el mismo código):
-
-| Interpretación | Correctas | Con inconsistencia | Diferencia |
-|---|---|---|---|
-| **Implementada** (enunciado + reglas derivadas) | **32** | **18** | — |
-| Solo las reglas explícitas del enunciado | 35 | 15 | FAC-0011, FAC-0027 y FAC-0039 (estado `Pendiente`) pasarían a correctas |
-| Duplicado = solo la segunda ocurrencia | 34 | 16 | La primera ocurrencia de FAC-0004 y FAC-0015 pasaría a correcta |
-
-Se mantiene `ESTADO_NO_CONTABILIZADO` como inconsistencia porque una factura cuyo registro contable está pendiente no está conciliada, y el caso menciona explícitamente las diferencias en *"estados de contabilización"*. Las demás reglas derivadas y adicionales no cambian el conteo con estos archivos.
-
-## Supuestos
-
-1. **El total se valida con el IVA y la retención esperados**, no con los reportados. Así, un IVA mal calculado aparece solo como `IVA_DIFERENTE` y no se arrastra como `TOTAL_DIFERENTE`. En la muestra, FAC-0006 y FAC-0018 tienen el total bien calculado y solo el IVA alterado.
-2. **`id_factura` es la llave del cruce.** `contabilidad.csv` no tiene NIT, así que un mismo `id_factura` con NIT distinto (FAC-0004, FAC-0015) se trata como duplicado. Se marcan todas las ocurrencias porque no es posible saber cuál es la válida.
-3. **Matiz contable:** en la práctica, la factura del proveedor no descuenta la retención; la practica el comprador al pagar. La fórmula de la prueba (`base + IVA − retención`) corresponde al **valor neto a pagar**. Se aplica tal como la define la prueba.
-4. **Formato simplificado de contabilidad:** cada línea trae débito = crédito en la misma fila. El valor contabilizado de una factura es la suma de sus débitos. Una factura puede repartirse en varias líneas (por ejemplo, por centro de costo).
-5. **Las líneas contables en 0** (FAC-0001 a FAC-0006 tienen una segunda línea sin valor) no afectan el valor contabilizado, por lo que se reportan como advertencia.
-6. **Tarifas:** se aceptan como fracción (`0.19`), número (`19`) o porcentaje (`19%`). Un valor mayor que 1 se interpreta como porcentaje.
-7. **Tolerancia de ±$1** para absorber redondeos al peso. Una tolerancia porcentual ocultaría diferencias reales: la menor de la muestra es de $1.500.
-8. **Estados válidos:** `Contabilizada` o `Contabilizado`, sin distinguir mayúsculas. Cualquier otro estado se considera no en firme.
-9. **Montos con `Decimal`**, nunca `float`: con `float`, 11 de las 50 facturas fallan una comparación exacta por errores de redondeo binario.
-10. **Archivos aceptados:** CSV en UTF-8 (con o sin BOM) o Windows-1252, separados por coma o punto y coma, con punto decimal. Las columnas adicionales se ignoran.
-11. **`ESTADO_NO_CONTABILIZADO` es una regla derivada del caso**, no una de las 5 reglas explícitas; su efecto en el resultado está en la tabla anterior.
-12. **El resultado 50/32/18 es el de esta solución**, no un resultado oficial entregado por la empresa.
-
-## Decisiones técnicas
-
-| Decisión | Por qué | Alternativa descartada |
-|---|---|---|
-| **Monorepo** con `backend/`, `frontend/`, `data/` y `docs/` | Un solo `git clone` y un solo README para instalar y ejecutar todo | Dos repositorios: obligan a coordinar versiones de dos proyectos |
-| **Trunk-based** sobre `main` con Conventional Commits y etiquetas de versión | Un solo desarrollador y una entrega única; el historial explica cada cambio | GitFlow: aporta control con varios equipos y versiones en paralelo; aquí agrega ceremonia sin beneficio |
-| **FastAPI** | Valida la entrada, genera Swagger (`/docs`) y los modelos de Pydantic son el contrato con el frontend | Flask: requiere validación y documentación manuales |
-| Backend en tres capas: **`infra`** (lectura del CSV), **`domain`** (reglas como funciones puras) y **`api`** (HTTP) | Las reglas se prueban sin servidor (47 de las 60 pruebas) y no dependen de cómo llegan los datos | Arquitectura hexagonal con casos de uso y repositorios: para un único caso de uso, más archivos que lógica |
-| **Sin base de datos**: cada solicitud se procesa en memoria | La prueba no pide histórico; no se retienen datos financieros | Persistir resultados: queda como siguiente paso |
-| Librería estándar **`csv`** | Suficiente para 40–60 registros, sin dependencias pesadas | pandas: potente, pero innecesario para este volumen |
-| Montos con **`Decimal`** | Con `float`, 11 de las 50 facturas fallan una comparación exacta; con `Decimal`, solo las 2 que de verdad tienen el IVA mal | `float` con redondeo: oculta errores en lugar de evitarlos |
-| **Tolerancia de ±$1** (`core/config.py`) | Absorbe redondeos al peso sin ocultar la menor diferencia real de la muestra ($1.500) | Tolerancia porcentual: 0,1 % ocultaría esa diferencia |
-| Montos como **texto** en el JSON | Los números de JSON son de punto flotante; el frontend los convierte solo para mostrarlos | Números en el JSON: posible pérdida de precisión |
-| Errores con una **forma única** `{codigo, mensaje, archivo}` en español | El frontend muestra el mensaje tal cual y el usuario sabe qué corregir | Errores por defecto de FastAPI: en inglés y con estructura distinta por caso |
-| Interpretación de las reglas ambiguas | Ver [Supuestos](#supuestos) y el efecto de cada interpretación en [Resultado](#resultado-con-los-archivos-de-prueba) | — |
-| **Angular 22** standalone, *zoneless*, `OnPush` y signals | Lo actual del framework; menos código y mejor rendimiento | Módulos y `zone.js`: enfoque anterior |
-| **Store con signals** provisto en la página, componentes de contenedor y de presentación | Un solo flujo lineal; los filtros son `computed()` sin sincronización manual | NgRx: multiplicaría el código para una pantalla |
-| **SCSS propio con tokens** y tipografía instalada por npm | Control del contraste (WCAG 2.2 AA) y del aspecto; el build no depende de internet | Angular Material: peso y aspecto difíciles de adaptar para una pantalla |
-| **Proxy** de desarrollo para `/api` (y nginx en Docker) | El navegador ve un solo origen, como en un despliegue real detrás de un dominio | Habilitar CORS en la API: la abre a otros orígenes |
-| **Docker y CI opcionales** | Comodidad adicional; la ejecución oficial (`pip` + `npm`) no requiere instalar nada más | Docker como única vía: exigiría al evaluador tenerlo instalado |
-
-## Funcionalidades no incluidas
-
-Fuera del alcance de un prototipo de 4–5 horas; quedan como siguientes pasos:
-
-- **Persistencia e histórico** de conciliaciones (hoy cada solicitud se procesa en memoria y se descarta).
-- **Exportar resultados** a Excel o CSV.
-- **Otras retenciones:** ReteIVA, ReteICA, bases mínimas en UVT y tarifas por concepto.
-- **Validación del NIT** con dígito de verificación y consistencia entre cuenta contable (PUC) y concepto.
-- **Asiento contable completo** (gasto, IVA descontable, retención por pagar, proveedores): el archivo de muestra trae una representación simplificada.
-- **CSV con coma decimal** (`1.234,56`): se aceptan `,` y `;` como separadores, pero solo punto decimal.
-- **Paginación** en la tabla y procesamiento de archivos grandes en segundo plano.
-- **Autenticación y autorización**, HTTPS y despliegue en un entorno real.
-
-## Uso de inteligencia artificial
-
-Se usó IA generativa. El detalle de en qué partes y con qué propósito está en [`docs/declaracion-ia.md`](docs/declaracion-ia.md).
-
-## Estructura del repositorio
-
-```
-.
-├── backend/     API REST en Python (FastAPI)
-├── frontend/    Aplicación web en Angular
-├── data/        Archivos CSV de prueba (casos-borde/ para probar errores)
-├── docs/        Declaración de IA y presentación
-├── .github/     Integración continua (GitHub Actions)
-└── docker-compose.yml   Ejecución opcional con Docker
-```
-
-## Backend
-
-### Ejecución
-
-Desde la raíz del repositorio:
-
-```bash
-cd backend
-python3 -m venv .venv                              # entorno aislado de dependencias
-.venv/bin/pip install -r requirements-dev.txt     # dependencias con versiones fijas
-.venv/bin/uvicorn app.main:app --port 8000         # inicia la API
-```
-
-> En Windows, reemplace `.venv/bin/` por `.venv\Scripts\`.
-
-- API: http://localhost:8000/api
-- Documentación interactiva (Swagger): http://localhost:8000/docs. Desde ahí se pueden cargar los archivos y probar el servicio sin el frontend.
-
-Prueba rápida desde otra terminal, en la raíz del repositorio:
-
-```bash
-curl -F facturas=@data/facturas.csv -F contabilidad=@data/contabilidad.csv \
-     http://localhost:8000/api/conciliaciones
-```
-
-Pruebas automatizadas y lint:
-
-```bash
-cd backend
-.venv/bin/pytest            # 60 pruebas
-.venv/bin/ruff check .      # lint
-```
-
-#### Dependencias
-
-| Paquete | Versión | Uso |
-|---|---|---|
-| fastapi | 0.143.2 | Framework de la API REST |
-| uvicorn | 0.54.0 | Servidor ASGI |
-| python-multipart | 0.0.32 | Recepción de archivos (`multipart/form-data`) |
-| pytest | 9.1.1 | Pruebas (solo desarrollo) |
-| httpx2 | 2.13.1 | Cliente HTTP para las pruebas de la API (solo desarrollo) |
-| ruff | 0.17.1 | Lint y formato (solo desarrollo) |
-
-### API
-
-| Método | Ruta | Descripción |
-|---|---|---|
-| `GET` | `/api/health` | Estado del servicio |
-| `POST` | `/api/conciliaciones` | Recibe los dos CSV y devuelve el resultado de la conciliación |
-
-#### `POST /api/conciliaciones`
-
-**Solicitud:** `multipart/form-data` con dos archivos: `facturas` y `contabilidad`. El servicio no guarda nada: cada solicitud se procesa en memoria.
-
-**Respuesta 200** (resumida):
-
-```json
-{
-  "resumen": {
-    "total_registros": 50,
-    "facturas_unicas": 48,
-    "correctas": 32,
-    "con_inconsistencia": 18,
-    "con_advertencias": 11,
-    "registros_contables": 50,
-    "por_causa": [
-      { "codigo": "DUPLICADA", "etiqueta": "Factura duplicada", "tipo": "INCONSISTENCIA", "cantidad": 4 }
-    ],
-    "monto_sin_contabilizar": "11521700.00",
-    "monto_no_en_firme": "5572350.00",
-    "monto_diferencias_calculo": "106500.00"
-  },
-  "detalle": [
-    {
-      "fila": 7,
-      "id_factura": "FAC-0006",
-      "nit_proveedor": "900782207",
-      "fecha_factura": "2026-03-07",
-      "concepto": "Consultoría profesional",
-      "base_gravable": "3800000.00",
-      "tarifa_iva": "0.05",
-      "valor_iva": "215000.00",
-      "tarifa_retencion": "0",
-      "valor_retencion": "0.00",
-      "total_factura": "3990000.00",
-      "estado": "CON_INCONSISTENCIA",
-      "causas": [
-        {
-          "codigo": "IVA_DIFERENTE",
-          "etiqueta": "IVA mal calculado",
-          "tipo": "INCONSISTENCIA",
-          "detalle": "IVA reportado $215.000; esperado $190.000 (base $3.800.000 × 5%).",
-          "valor_reportado": "215000.00",
-          "valor_esperado": "190000.00",
-          "diferencia": "25000.00"
-        }
-      ],
-      "advertencias": [
-        { "codigo": "LINEA_CONTABLE_EN_CERO", "etiqueta": "Línea contable sin valor", "tipo": "ADVERTENCIA", "detalle": "Línea contable sin valor (fila 51, cuenta 512010, centro de costo CC1002).", "valor_reportado": null, "valor_esperado": null, "diferencia": null }
-      ],
-      "calculos": {
-        "iva_esperado": "190000.00",
-        "retencion_esperada": "0.00",
-        "total_esperado": "3990000.00",
-        "valor_contabilizado": "3990000.00"
-      }
-    }
-  ],
-  "registros_contables_sin_factura": [],
-  "tolerancia": "1.00"
-}
-```
-
-- `fila` es la línea del archivo original (el encabezado es la línea 1), para ubicar la factura en Excel.
-- Los montos viajan como **texto** para no perder precisión en JSON.
-- `por_causa` lista primero las inconsistencias y luego las advertencias.
-
-#### Errores
-
-Todos los errores tienen la misma forma, con el mensaje en español:
-
-```json
-{ "codigo": "COLUMNAS_FALTANTES", "mensaje": "Al archivo 'facturas.csv' le faltan columnas obligatorias: tarifa_iva.", "archivo": "facturas.csv" }
-```
-
-| HTTP | Código | Cuándo |
-|---|---|---|
-| 400 | `EXTENSION_INVALIDA` | El archivo no tiene extensión `.csv` |
-| 400 | `ARCHIVO_VACIO` | El archivo está vacío o solo tiene encabezado |
-| 400 | `COLUMNAS_FALTANTES` | Faltan columnas obligatorias (se listan) |
-| 400 | `CODIFICACION_INVALIDA` | El archivo no está en UTF-8 ni Windows-1252 |
-| 400 | `ARCHIVO_INVALIDO` | El contenido no es un CSV legible |
-| 413 | `ARCHIVO_DEMASIADO_GRANDE` | El archivo supera 5 MB |
-| 422 | `SOLICITUD_INVALIDA` | Falta alguno de los dos archivos |
-| 500 | `ERROR_INTERNO` | Error inesperado (el detalle técnico queda solo en el log del servidor) |
-
-Los datos inválidos en **filas individuales** (montos en letras, fechas mal escritas) no rechazan el archivo: esas facturas se marcan con `VALOR_INVALIDO` o `CAMPO_VACIO` y el resto se procesa. En `data/casos-borde/` hay archivos para probar cada caso.
-
-#### Seguridad
-
-- Sin base de datos ni almacenamiento: los archivos se procesan en memoria y se descartan.
-- Límite de 5 MB por archivo y validación de extensión y estructura.
-- Cabeceras `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`; en `/api/*` también `Cache-Control: no-store` (información financiera) y `Content-Security-Policy`.
-- El log registra solo conteos, nunca datos de facturas o proveedores. Los errores inesperados no exponen trazas al cliente.
-
-## Frontend
-
-### Ejecución
-
-Desde la raíz del repositorio, en otra terminal (con el backend corriendo en el puerto 8000):
-
-```bash
-cd frontend
-npm ci          # instala las versiones exactas de package-lock.json
-npm start       # http://localhost:4200
-```
-
-`npm start` usa `proxy.conf.json`: las llamadas a `/api` se reenvían a `http://localhost:8000`, así el navegador ve un solo origen y la API no necesita habilitar CORS.
-
-Pruebas, lint y build:
-
-```bash
-cd frontend
-npm test              # pruebas unitarias (Vitest)
-npm run lint          # ESLint con reglas de accesibilidad de plantillas
-npm run format:check  # formato (Prettier)
-npm run build         # build de producción en dist/
-```
-
-#### Dependencias
-
-| Paquete | Versión | Uso |
-|---|---|---|
-| Angular | 22.2 | Framework (componentes standalone, signals, sin zone.js) |
-| @fontsource/nunito-sans | 5.3 | Tipografía libre instalada por npm (sin CDN: el build funciona sin conexión) |
-| Vitest + jsdom | 4.1 / 28 | Pruebas unitarias (solo desarrollo) |
-| angular-eslint | 22.6 | Lint de TypeScript y plantillas (solo desarrollo) |
-| Prettier | 3.9 | Formato (solo desarrollo) |
-
-No se usa una librería de componentes: los estilos son SCSS propio con tokens de diseño.
-
-### Uso paso a paso
-
-Con el backend (puerto 8000) y el frontend (puerto 4200) en ejecución:
-
-1. Abra http://localhost:4200.
-2. En **1. Cargar archivos**, seleccione `data/facturas.csv` y `data/contabilidad.csv`, con clic, teclado o arrastrándolos. El botón **Conciliar archivos** se habilita cuando están los dos.
-3. Presione **Conciliar archivos**. Se muestra un indicador de carga y, al terminar, el foco pasa al resultado.
-4. En **2. Resultado de la conciliación** se ven los indicadores (50 facturas: 32 correctas y 18 con inconsistencia), los montos afectados y el conteo por causa.
-5. En **3. Detalle por factura**, filtre por estado (Todas / Correctas / Con inconsistencia), por causa o por texto (factura, NIT o concepto).
-6. Presione **Ver detalle** en una factura para ver cada causa con el valor reportado, el esperado y la diferencia, sus advertencias y la tabla de cálculos (por ejemplo, FAC-0006: IVA reportado $215.000, esperado $190.000).
-7. **4. Registros contables sin factura** lista los registros contables huérfanos (ninguno en la muestra).
-8. Para probar errores, use los archivos de `data/casos-borde/`. Si el backend está detenido, la interfaz lo indica con un mensaje claro.
-
-### Arquitectura
-
-```
-frontend/src/app/
-├── core/
-│   ├── layout/                     Encabezado y pie de página
-│   ├── models/                     Interfaces del contrato de la API (copia de los schemas de Pydantic)
-│   └── services/                   ConciliacionApiService (HttpClient) y traducción de errores
-├── features/conciliacion/
-│   ├── conciliacion.page.*         Contenedor: conecta el store con los componentes y gestiona el foco
-│   ├── conciliacion.store.ts       Estado con signals: archivos, proceso, resultado, filtros y valores derivados
-│   ├── carga-archivos/             Paso 1: selección de archivos
-│   ├── resumen-conciliacion/       Paso 2: indicadores y distribución por causa
-│   ├── filtros-resultados/         Filtros por estado, causa y búsqueda
-│   ├── tabla-resultados/           Tabla en escritorio y tarjetas en móvil
-│   └── detalle-factura/            Trazabilidad de una factura
-└── shared/                         Componentes y pipes reutilizables (botón, selector, KPI, insignia, alerta, montos)
-```
-
-- **Contenedor y presentación:** solo la página conoce el store; los demás componentes reciben datos por `input()`/`model()` y emiten eventos por `output()`.
-- **Estado con signals**, sin librerías: el store se provee en la página, así que el estado se descarta al salir de ella. Los filtros son `computed()` sobre el resultado.
-- **Sin CORS:** la URL de la API es relativa (`/api/...`) y en desarrollo la resuelve `proxy.conf.json`.
-- **Pruebas:** unitarias de componentes, servicio y store, y una prueba de integración de la página que usa la respuesta real del backend (`src/testing/respuesta-muestra.json`), para verificar que lo procesado coincide con lo mostrado.
-
-### Diseño y accesibilidad
-
-**Identidad visual** (inspirada, no oficial): amarillo como acento, gris carbón para texto y encabezados, fondos blancos y grises claros, bordes redondeados y espacio generoso. Sin logo ni tipografía propietaria. Los tokens están en `frontend/src/styles/_tokens.scss`.
-
-**Mobile first:** los estilos base son para pantallas pequeñas y se amplían desde 640 px y 1024 px. Verificado en 320 px, 375 px y escritorio.
-
-**Accesibilidad (objetivo WCAG 2.2 AA):**
-
-- **Contraste verificado** en todos los pares de colores (texto ≥ 4,5:1, bordes de controles ≥ 3:1). El amarillo solo se usa como fondo con texto oscuro (11,3:1); nunca como texto sobre blanco (1,46:1).
-- **El estado nunca se comunica solo con color:** verde + ícono + "Correcta", rojo + ícono + "Con inconsistencia", naranja + ícono para advertencias. La advertencia es naranja, no ámbar, para no confundirse con el amarillo de marca.
-- **Teclado:** enlace "Saltar al contenido", foco visible en todos los controles (contorno oscuro con separación blanca, visible sobre blanco y sobre amarillo) y foco devuelto al campo al quitar un archivo.
-- **Lectores de pantalla:** `lang="es"`, regiones `header`/`main`/`footer`, un solo `h1`, campos de archivo nativos con etiqueta y descripción asociadas, `aria-invalid` en errores, errores anunciados con `role="alert"` y estados de carga con `role="status"`. Los íconos son decorativos (`aria-hidden`) porque siempre van con texto.
-- **Objetivos táctiles** de al menos 44 × 44 px, tamaños en `rem` (respeta el tamaño de letra del usuario), cifras con `tabular-nums`, soporte de `prefers-reduced-motion` y de modo de alto contraste (`forced-colors`).
-- **Validación automática:** ESLint con `templateAccessibility` de angular-eslint y pruebas unitarias que verifican roles, etiquetas y textos de estado.
-
-## Docker (opcional)
-
-La forma oficial de ejecutar la solución es la del [Inicio rápido](#inicio-rápido). Docker es una alternativa que levanta todo con un solo comando y sirve el frontend compilado para producción.
+### Con Docker (opcional)
 
 ```bash
 docker compose up --build      # http://localhost:8080
-docker compose down            # detiene y elimina los contenedores
+docker compose down
 ```
 
-| Servicio | Imagen base | Qué hace |
-|---|---|---|
-| `backend` | `python:3.14-slim` | API FastAPI. Corre sin root, con *healthcheck* sobre `/api/health`. No expone puertos al exterior. |
-| `frontend` | `node:24-alpine` (build) → `nginxinc/nginx-unprivileged:1.29-alpine` | nginx sirve Angular y reenvía `/api` al backend (mismo papel que `proxy.conf.json` en desarrollo). Escucha en el puerto 8080, sin root. |
-
-El frontend espera a que el backend esté sano antes de arrancar.
-
-**Requisito:** un motor de Docker con Compose v2 (Docker Desktop, Colima, Rancher Desktop u otro). Probado con Colima 0.10.3, Docker 29.5 y Compose 5.6 en macOS.
+nginx sirve el frontend y reenvía `/api` al backend, que no queda expuesto. Para Postman use el entorno `postman/docker.postman_environment.json`.
 
 <details>
-<summary>Instalación con Colima en macOS y solución de problemas</summary>
+<summary>Docker con Colima (macOS) y solución de problemas</summary>
 
 ```bash
 brew install colima docker docker-compose
 colima start --cpu 2 --memory 4
 ```
 
-- **`docker: 'compose' is not a docker command`**: el plugin de Homebrew debe registrarse en `~/.docker/config.json`:
-  ```json
-  { "cliPluginsExtraDirs": ["/opt/homebrew/lib/docker/cli-plugins"] }
-  ```
-- **`Cannot connect to the Docker daemon`**: la máquina virtual no está corriendo; ejecute `colima start` (verifique con `colima status`).
-- **El puerto 8080 está ocupado**: cambie `'8080:8080'` por `'8081:8080'` en `docker-compose.yml` y abra http://localhost:8081.
-- **Al terminar**: `colima stop` libera la memoria de la máquina virtual.
+- `docker: 'compose' is not a docker command` → agregue a `~/.docker/config.json`: `{ "cliPluginsExtraDirs": ["/opt/homebrew/lib/docker/cli-plugins"] }`.
+- `Cannot connect to the Docker daemon` → `colima start`.
+- Puerto 8080 ocupado → cambie `'8080:8080'` por `'8081:8080'` en `docker-compose.yml`.
 
 </details>
 
-## Integración continua
+## Pruebas
 
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml) se ejecuta en GitHub Actions en cada *push* o *pull request* a `main`:
+### Backend
 
-| Trabajo | Pasos |
-|---|---|
-| Backend (Python 3.12 y 3.14) | `ruff check`, `ruff format --check`, `pytest` |
-| Frontend (Node 24) | `npm ci`, `lint`, `format:check`, `test`, `build` |
+```bash
+cd backend
+.venv/bin/pytest          # 60 pruebas: reglas, lector CSV, API y resultado de la muestra
+.venv/bin/ruff check .
+```
 
-Python 3.12 es la versión mínima declarada; 3.14 es la de desarrollo. Los pasos se verificaron en local (incluido Python 3.13). El workflow se ejecutará en GitHub cuando el repositorio se publique.
+### Frontend
 
-## Control de versiones
+```bash
+cd frontend
+npm test                  # 49 pruebas unitarias y de integración (Vitest)
+npm run lint              # incluye reglas de accesibilidad de plantillas
+npm run build
+```
 
-- Desarrollo **trunk-based** sobre `main` con commits pequeños según [Conventional Commits](https://www.conventionalcommits.org/es/v1.0.0/) (`feat`, `fix`, `test`, `docs`, `refactor`, `build`, `chore`).
-- Versiones etiquetadas: **`v1.0.0`** (entrega base), **`v1.1.0`** (Docker y CI opcionales), **`v1.1.1`** (decisiones técnicas en el README) y **`v1.1.2`** (declaración de IA ampliada, versión para entregar); los cambios están en [`CHANGELOG.md`](CHANGELOG.md).
-- Se eligió trunk-based en lugar de GitFlow porque es un proyecto de un solo desarrollador y la prueba no exige un flujo de ramas (ver [Decisiones técnicas](#decisiones-técnicas)).
+### De punta a punta
+
+```bash
+cd frontend
+npx playwright install chromium   # solo la primera vez
+npm run e2e               # 6 escenarios en escritorio y en móvil; levanta backend y frontend
+```
+
+Requiere el entorno del backend (`backend/.venv`) ya creado. Escenarios: flujo principal, filtros, detalle trazable, archivo con columna faltante, archivo no CSV y servidor no disponible.
+
+La integración continua ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) ejecuta todo lo anterior en cada *push* a `main`.
+
+## Reglas de negocio
+
+Cada factura queda **Correcta** o **Con inconsistencia**; una factura puede tener varias causas, y cada una muestra el valor reportado, el esperado y la diferencia. Tolerancia de **±$1** en las comparaciones.
+
+| Causa | Regla | Origen |
+|---|---|---|
+| IVA mal calculado | `valor_iva` ≠ `base_gravable × tarifa_iva` | Enunciado (regla 1) |
+| Total no cuadra | `total_factura` ≠ `base + IVA esperado − retención esperada` | Enunciado (regla 2) |
+| Factura duplicada | `id_factura` repetido; se marcan todas las ocurrencias | Enunciado (regla 3) |
+| Sin registro contable | `id_factura` ausente en contabilidad | Enunciado (regla 3) |
+| Campo obligatorio vacío | Alguno de los 10 campos mínimos está vacío | Enunciado (campos obligatorios) |
+| Contabilización no en firme | Estado contable distinto a `Contabilizada` | Derivada del caso (*estados de contabilización*) |
+| Valor contabilizado diferente | Suma de débitos ≠ `total_factura` | Derivada del caso (*diferencias en valores*) |
+| Retención mal calculada | `valor_retencion` ≠ `base_gravable × tarifa_retencion` | Derivada del caso (*retenciones*) |
+| Valor inválido · Partida descuadrada · Registro contable incompleto | Formato inválido · débitos ≠ créditos · registro contable con campos vacíos | Adicional (robustez) |
+
+**Advertencias** (no cambian la clasificación): línea contable en 0, contabilizada en un periodo posterior y fecha contable anterior a la factura.
+
+## Resultado esperado
+
+Con `data/facturas.csv` y `data/contabilidad.csv`: **50 facturas (48 únicas), 32 correctas y 18 con inconsistencia**; $11.521.700 sin contabilizar, $5.572.350 con contabilización no en firme y $106.500 en diferencias de cálculo.
+
+- Duplicadas: FAC-0004 y FAC-0015 (las dos ocurrencias de cada una).
+- Sin registro contable: FAC-0007, FAC-0021, FAC-0034 y FAC-0042.
+- Total no cuadra: FAC-0009, FAC-0023 y FAC-0036. IVA mal calculado: FAC-0006 y FAC-0018.
+- Campo vacío: FAC-0013 (NIT), FAC-0029 (concepto) y FAC-0042 (fecha).
+- Contabilización pendiente: FAC-0011, FAC-0027 y FAC-0039.
+
+Lo verifican `backend/tests/test_muestra_real.py`, la colección de Postman y las pruebas E2E. Es el resultado según los supuestos de abajo: aplicando solo las reglas explícitas del enunciado sería **35 / 15** (las 3 pendientes pasarían a correctas), y marcando solo la segunda ocurrencia de cada duplicado, **34 / 16**.
+
+## Supuestos
+
+- El total se valida con el IVA y la retención **esperados**, para que cada error aparezca con su causa raíz (FAC-0006 y FAC-0018 tienen solo el IVA alterado).
+- `id_factura` es la llave del cruce (contabilidad no tiene NIT); por eso un mismo id con NIT distinto es duplicado.
+- La fórmula de la regla 2 corresponde al **neto a pagar**: en la práctica la retención la practica el comprador. Se aplica tal como la define la prueba.
+- Contabilidad es una representación simplificada (débito = crédito por línea); el valor contabilizado es la suma de débitos del `id_factura`.
+- Las tarifas se aceptan como `0.19`, `19` o `19%`; los estados válidos son `Contabilizada`/`Contabilizado`.
+- Se aceptan CSV en UTF-8 (con o sin BOM) o Windows-1252, separados por `,` o `;`, con punto decimal, de hasta 5 MB.
+- El resultado 50 / 32 / 18 es el de esta solución; la empresa no entregó un resultado oficial.
+
+## Decisiones técnicas
+
+### Backend
+
+- **FastAPI**: valida la entrada y genera Swagger; Pydantic define el contrato con el frontend.
+- **Capas `infra` / `domain` / `api`**, sin capa de casos de uso ni base de datos: hay un único caso de uso y las reglas se prueban sin servidor.
+- **`Decimal`** para montos: con `float`, 11 de las 50 facturas fallan una comparación exacta.
+- **Tolerancia de ±$1**: un porcentaje ocultaría la menor diferencia real de la muestra ($1.500).
+- **Montos como texto en el JSON**, para no perder precisión; errores con forma única `{codigo, mensaje, archivo}` en español.
+- **Seguridad básica**: límite de 5 MB, sin almacenamiento, cabeceras de seguridad, `Cache-Control: no-store` y logs sin datos de facturas.
+
+### Frontend
+
+- **Angular 22** (versión estable vigente) con standalone, zoneless y signals.
+- **Signals para el estado** (`signal`, `computed`, `input`, `model`); el observable de `HttpClient` solo en el servicio, y el store vuelca el resultado en signals.
+- **SCSS propio con tokens** en lugar de una librería de componentes: control del contraste y del aspecto.
+- **Proxy para `/api`** (nginx en Docker) en lugar de CORS: el navegador ve un solo origen.
+- **`.npmrc`**: solo versiones publicadas hace más de 2 días, scripts de instalación revisados (`allowScripts`) y versión de Node validada con `engines`.
+
+### General
+
+- **Monorepo trunk-based** con Conventional Commits: un desarrollador y una entrega.
+- **Docker y CI son opcionales**: la ejecución oficial (`pip` + `npm`) no exige instalar nada más.
+
+## Funcionalidades no incluidas
+
+- Persistencia, histórico de conciliaciones y exportación a Excel.
+- ReteIVA, ReteICA, bases en UVT y validación del NIT con dígito de verificación.
+- Asiento contable completo y CSV con coma decimal.
+- Paginación y procesamiento de archivos grandes en segundo plano.
+- Autenticación, HTTPS y despliegue en un entorno real.
+
+## Uso de inteligencia artificial
+
+Se usó IA generativa; el detalle está en [`docs/declaracion-ia.md`](docs/declaracion-ia.md).
+
+---
+
+Versiones etiquetadas y cambios en [`CHANGELOG.md`](CHANGELOG.md).

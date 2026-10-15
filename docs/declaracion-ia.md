@@ -29,9 +29,10 @@
 | Plan y arquitectura | Propuesta de estructura del repositorio, capas del backend, componentes del frontend y fases de trabajo | Organizar el desarrollo en 4–5 horas de referencia |
 | Backend (Python) | Generación del código: lector CSV, modelos, reglas, conciliador, API, manejo de errores | Implementar las reglas y el servicio REST |
 | Frontend (Angular) | Generación del código: tokens de diseño, componentes compartidos, store, servicio, pantalla de conciliación | Implementar la interfaz y la integración con la API |
-| Pruebas | Generación de las pruebas automatizadas (60 de backend y 49 de frontend) y de los archivos de `data/casos-borde/` | Verificar las reglas, los errores y la correspondencia entre lo procesado y lo mostrado |
+| Pruebas | Generación de las pruebas automatizadas (60 de backend, 49 de frontend y 6 escenarios E2E con Playwright), la colección de Postman y los archivos de `data/casos-borde/` | Verificar las reglas, los errores y la correspondencia entre lo procesado y lo mostrado |
 | Verificación visual | Revisión en el navegador (escritorio, 320 px y 375 px), navegación con teclado y árbol de accesibilidad | Detectar y corregir problemas de diseño responsive y de accesibilidad |
 | Documentación | Redacción del README, el CHANGELOG y esta declaración | Documentar instalación, reglas, supuestos y decisiones |
+| Configuración y seguridad de dependencias | `engines`, `.npmrc` (antigüedad mínima de versiones y scripts de instalación revisados) | Instalación reproducible y menor riesgo en la cadena de suministro |
 | Docker e integración continua | Generación de los Dockerfile, la configuración de nginx, `docker-compose.yml` y el workflow de GitHub Actions; instalación y prueba con Colima | Ofrecer una ejecución alternativa con un solo comando y verificación automática en cada cambio |
 | Presentación | Generación de la presentación de 5 diapositivas a partir de los resultados reales de la muestra | Comunicar la propuesta al equipo funcional |
 
@@ -53,7 +54,7 @@ La IA propuso opciones; estas decisiones las tomó el candidato:
 
 - **Pruebas automatizadas** de backend y frontend, incluida una prueba que fija el resultado de la muestra (50 / 32 / 18) y una prueba de integración del frontend con la respuesta real del backend.
 - **Lint y formato** en ambos proyectos (ruff, ESLint con reglas de accesibilidad, Prettier).
-- **Ejecución de punta a punta** con los dos servidores: carga de los archivos, filtros, detalle por factura y casos de error (archivo inválido, backend detenido).
+- **Pruebas de punta a punta** con Playwright (escritorio y móvil) y **colección de Postman** ejecutada con Newman contra la ejecución local y contra Docker.
 - **Contraste de colores** calculado con la fórmula de WCAG 2.2 para cada par usado.
 - **Revisión del candidato** al cierre de cada fase, con los comandos de verificación incluidos en el README.
 
