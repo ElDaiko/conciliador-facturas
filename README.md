@@ -13,6 +13,8 @@ Prototipo web que cruza el archivo de **facturas de proveedores** con el de **re
 - [Ejecución del backend](#ejecución-del-backend)
 - [API](#api)
 - [Ejecución del frontend](#ejecución-del-frontend)
+- [Uso paso a paso](#uso-paso-a-paso)
+- [Arquitectura del frontend](#arquitectura-del-frontend)
 - [Diseño y accesibilidad](#diseño-y-accesibilidad)
 - [Reglas de negocio](#reglas-de-negocio)
 - [Resultado esperado con los archivos de prueba](#resultado-esperado-con-los-archivos-de-prueba)
@@ -217,6 +219,43 @@ npm run build         # build de producción en dist/
 | Prettier | 3.9 | Formato (solo desarrollo) |
 
 No se usa una librería de componentes: los estilos son SCSS propio con tokens de diseño.
+
+## Uso paso a paso
+
+Con el backend (puerto 8000) y el frontend (puerto 4200) en ejecución:
+
+1. Abra http://localhost:4200.
+2. En **1. Cargar archivos**, seleccione `data/facturas.csv` y `data/contabilidad.csv`, con clic, teclado o arrastrándolos. El botón **Conciliar archivos** se habilita cuando están los dos.
+3. Presione **Conciliar archivos**. Se muestra un indicador de carga y, al terminar, el foco pasa al resultado.
+4. En **2. Resultado de la conciliación** se ven los indicadores (50 facturas: 32 correctas y 18 con inconsistencia), los montos afectados y el conteo por causa.
+5. En **3. Detalle por factura**, filtre por estado (Todas / Correctas / Con inconsistencia), por causa o por texto (factura, NIT o concepto).
+6. Presione **Ver detalle** en una factura para ver cada causa con el valor reportado, el esperado y la diferencia, sus advertencias y la tabla de cálculos (por ejemplo, FAC-0006: IVA reportado $215.000, esperado $190.000).
+7. **4. Registros contables sin factura** lista los registros contables huérfanos (ninguno en la muestra).
+8. Para probar errores, use los archivos de `data/casos-borde/`. Si el backend está detenido, la interfaz lo indica con un mensaje claro.
+
+## Arquitectura del frontend
+
+```
+frontend/src/app/
+├── core/
+│   ├── layout/                     Encabezado y pie de página
+│   ├── models/                     Interfaces del contrato de la API (copia de los schemas de Pydantic)
+│   └── services/                   ConciliacionApiService (HttpClient) y traducción de errores
+├── features/conciliacion/
+│   ├── conciliacion.page.*         Contenedor: conecta el store con los componentes y gestiona el foco
+│   ├── conciliacion.store.ts       Estado con signals: archivos, proceso, resultado, filtros y valores derivados
+│   ├── carga-archivos/             Paso 1: selección de archivos
+│   ├── resumen-conciliacion/       Paso 2: indicadores y distribución por causa
+│   ├── filtros-resultados/         Filtros por estado, causa y búsqueda
+│   ├── tabla-resultados/           Tabla en escritorio y tarjetas en móvil
+│   └── detalle-factura/            Trazabilidad de una factura
+└── shared/                         Componentes y pipes reutilizables (botón, selector, KPI, insignia, alerta, montos)
+```
+
+- **Contenedor y presentación:** solo la página conoce el store; los demás componentes reciben datos por `input()`/`model()` y emiten eventos por `output()`.
+- **Estado con signals**, sin librerías: el store se provee en la página, así que el estado se descarta al salir de ella. Los filtros son `computed()` sobre el resultado.
+- **Sin CORS:** la URL de la API es relativa (`/api/...`) y en desarrollo la resuelve `proxy.conf.json`.
+- **Pruebas:** unitarias de componentes, servicio y store, y una prueba de integración de la página que usa la respuesta real del backend (`src/testing/respuesta-muestra.json`), para verificar que lo procesado coincide con lo mostrado.
 
 ## Diseño y accesibilidad
 

@@ -11,3 +11,4 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 - API REST (`POST /api/conciliaciones`, `GET /api/health`) con errores en español y cabeceras de seguridad.
 - Archivos de casos borde en `data/casos-borde/`.
 - Frontend Angular 22: tokens de diseño, base accesible y componentes compartidos (botón, selector de archivo, tarjeta KPI, insignia de estado, alerta, indicador de carga, pipe de montos).
+- Pantalla de conciliación: carga de archivos, resumen con indicadores y montos, filtros por estado/causa/búsqueda, tabla responsive con detalle trazable por factura y registros contables sin factura.
