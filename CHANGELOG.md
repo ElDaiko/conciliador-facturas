@@ -2,6 +2,20 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y [SemVer](https://semver.org/lang/es/).
 
+## [1.2.0] - 2026-10-15
+
+### Added
+- Colección de Postman (`postman/`) con entornos Local y Docker: 11 solicitudes y 47 verificaciones, incluidos los casos de error.
+- Pruebas de punta a punta con Playwright (6 escenarios en escritorio y móvil) e integración en el CI.
+- `engines` en `package.json` y `.npmrc` con antigüedad mínima de versiones, scripts de instalación revisados y validación de la versión de Node.
+
+### Changed
+- README resumido y organizado por secciones (stack, arquitectura, requisitos, ejecución, pruebas) con subsecciones de backend y frontend. El contrato de la API se consulta en Swagger o en la colección de Postman.
+
+### Fixed
+- Requisito de Node corregido a 22.22.3+ o 24.15+ (lo exige Angular 22).
+- El build de Docker del frontend aplica la configuración de `.npmrc`.
+
 ## [1.1.2] - 2026-10-15
 
 ### Changed
