@@ -99,3 +99,12 @@ test('informa cuando el servidor no está disponible', async ({ page }) => {
 
   await expect(page.getByRole('alert')).toContainText('No fue posible conectar con el servidor');
 });
+
+test('rechaza un libro de Excel renombrado como CSV con una sugerencia', async ({ page }) => {
+  await cargar(page, 'casos-borde/facturas_excel_renombrado.csv', 'contabilidad.csv');
+  await page.getByRole('button', { name: 'Conciliar archivos' }).click();
+
+  const alerta = page.getByRole('alert');
+  await expect(alerta).toContainText('parece ser un libro de Excel');
+  await expect(alerta).toContainText('CSV UTF-8');
+});

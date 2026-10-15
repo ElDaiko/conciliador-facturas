@@ -46,6 +46,13 @@ describe('SelectorArchivo', () => {
     expect(campo().getAttribute('aria-describedby')).toContain('-error');
   });
 
+  it('a una hoja de cálculo le sugiere guardarla como CSV', async () => {
+    await seleccionar(new File(['x'], 'facturas.xlsx'));
+    expect(fixture.componentInstance.archivo()).toBeNull();
+    expect(html.textContent).toContain('"facturas.xlsx" es una hoja de cálculo.');
+    expect(html.textContent).toContain('CSV UTF-8');
+  });
+
   it('rechaza un archivo vacío', async () => {
     await seleccionar(new File([], 'vacio.csv'));
     expect(html.textContent).toContain('"vacio.csv" está vacío.');

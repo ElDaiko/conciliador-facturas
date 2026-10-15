@@ -82,8 +82,14 @@ export class SelectorArchivo {
   }
 }
 
+const EXTENSIONES_HOJA_DE_CALCULO = ['.xlsx', '.xls', '.xlsm', '.ods'];
+
 function validar(archivo: File): string | null {
-  if (!archivo.name.toLowerCase().endsWith('.csv')) {
+  const nombre = archivo.name.toLowerCase();
+  if (EXTENSIONES_HOJA_DE_CALCULO.some((extension) => nombre.endsWith(extension))) {
+    return `"${archivo.name}" es una hoja de cálculo. Ábrala en Excel y use "Guardar como" → "CSV UTF-8".`;
+  }
+  if (!nombre.endsWith('.csv')) {
     return `"${archivo.name}" no es un archivo CSV.`;
   }
   if (archivo.size === 0) {
