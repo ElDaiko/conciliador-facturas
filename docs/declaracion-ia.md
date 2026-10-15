@@ -27,9 +27,9 @@
 | Análisis del enunciado | Lectura del PDF, identificación de ambigüedades en las reglas y lista de preguntas abiertas | Entender el alcance y los riesgos antes de programar |
 | Análisis de los datos de muestra | Script exploratorio que aplicó las reglas a los CSV y detectó los casos presentes (duplicados, vacíos, sin contabilizar, diferencias) | Fundamentar las interpretaciones con evidencia de los datos |
 | Plan y arquitectura | Propuesta de estructura del repositorio, capas del backend, componentes del frontend y fases de trabajo | Organizar el desarrollo en 4–5 horas de referencia |
-| Backend (Python) | Generación del código: lector CSV, modelos, reglas, conciliador, API, manejo de errores | Implementar las reglas y el servicio REST |
+| Backend (Python) | Generación del código: lector CSV, modelos, reglas, conciliador, API, manejo de errores y validación de archivos dañados o mal formados | Implementar las reglas y el servicio REST |
 | Frontend (Angular) | Generación del código: tokens de diseño, componentes compartidos, store, servicio, pantalla de conciliación | Implementar la interfaz y la integración con la API |
-| Pruebas | Generación de las pruebas automatizadas (60 de backend, 49 de frontend y 6 escenarios E2E con Playwright), la colección de Postman y los archivos de `data/casos-borde/` | Verificar las reglas, los errores y la correspondencia entre lo procesado y lo mostrado |
+| Pruebas | Generación de las pruebas automatizadas (67 de backend, 50 de frontend y 7 escenarios E2E con Playwright), la colección de Postman y los archivos de `data/casos-borde/` | Verificar las reglas, los errores y la correspondencia entre lo procesado y lo mostrado |
 | Verificación visual | Revisión en el navegador (escritorio, 320 px y 375 px), navegación con teclado y árbol de accesibilidad | Detectar y corregir problemas de diseño responsive y de accesibilidad |
 | Documentación | Redacción del README, el CHANGELOG y esta declaración | Documentar instalación, reglas, supuestos y decisiones |
 | Configuración y seguridad de dependencias | `engines`, `.npmrc` (antigüedad mínima de versiones y scripts de instalación revisados) | Instalación reproducible y menor riesgo en la cadena de suministro |
@@ -49,6 +49,18 @@ La IA propuso opciones; estas decisiones las tomó el candidato:
 - Mantener el estado contable `Pendiente` como **inconsistencia** (regla derivada del caso) y documentarlo con el resultado alternativo.
 - Conservar los extras (Docker, CI y reglas adicionales) marcados como opcionales, y documentar las decisiones técnicas en el README.
 - Simplificar el código del backend para priorizar la legibilidad sobre la concisión.
+
+## Mejoras propuestas por el candidato
+
+Al revisar cada entrega, el candidato propuso estos cambios; la IA los implementó y verificó:
+
+- **Ajuste al alcance del enunciado:** preguntar, para cada extra, si la prueba lo pedía. Así se llevaron las decisiones técnicas al README (el enunciado lo exige ahí) y se retiraron del README y de la presentación las funcionalidades que no se solicitaron.
+- **README más corto**, organizado por stack, arquitectura, requisitos, ejecución y pruebas, cada sección con su parte de backend y frontend; el contrato de la API se consulta en Swagger.
+- **Colección de Postman** con entornos local y Docker, para probar la API sin escribir comandos.
+- **Pruebas de punta a punta con Playwright**, integradas al CI.
+- **Seguridad de dependencias:** `engines` para la versión de Node y `.npmrc` con antigüedad mínima de versiones y scripts de instalación revisados.
+- **Validación de archivos corruptos o errados:** libros de Excel o PDF renombrados como CSV, archivos en UTF-16, archivos dañados y comillas sin cerrar, con mensajes que explican cómo corregirlos.
+- **Identidad visual** más cercana al sitio público del banco, limitada a estilos (sin cambios funcionales, sin logo ni tipografía propietaria).
 
 ## Cómo se validó lo generado
 

@@ -102,7 +102,7 @@ npm start
 ### Probar
 
 1. Abra http://localhost:4200, cargue `data/facturas.csv` y `data/contabilidad.csv` y presione **Conciliar archivos**. Debe ver **50 facturas: 32 correctas y 18 con inconsistencia**.
-2. **API con Postman:** importe `postman/conciliador.postman_collection.json` y el entorno `postman/local.postman_environment.json`. En *Settings → General → Working directory* elija la raíz del repositorio (las solicitudes cargan los archivos de `data/`). Ejecute la colección: 11 solicitudes con 47 verificaciones, incluidos los casos de error.
+2. **API con Postman:** importe `postman/conciliador.postman_collection.json` y el entorno `postman/local.postman_environment.json`. En *Settings → General → Working directory* elija la raíz del repositorio (las solicitudes cargan los archivos de `data/`). Ejecute la colección: 15 solicitudes con 62 verificaciones, incluidos los casos de error.
    Sin Postman, desde la raíz: `npx newman run postman/conciliador.postman_collection.json -e postman/local.postman_environment.json`.
 
 ### Con Docker (opcional)
@@ -134,7 +134,7 @@ colima start --cpu 2 --memory 4
 
 ```bash
 cd backend
-.venv/bin/pytest          # 60 pruebas: reglas, lector CSV, API y resultado de la muestra
+.venv/bin/pytest          # 67 pruebas: reglas, lector CSV, API y resultado de la muestra
 .venv/bin/ruff check .
 ```
 
@@ -142,7 +142,7 @@ cd backend
 
 ```bash
 cd frontend
-npm test                  # 49 pruebas unitarias y de integración (Vitest)
+npm test                  # 50 pruebas unitarias y de integración (Vitest)
 npm run lint              # incluye reglas de accesibilidad de plantillas
 npm run build
 ```
@@ -152,10 +152,10 @@ npm run build
 ```bash
 cd frontend
 npx playwright install chromium   # solo la primera vez
-npm run e2e               # 6 escenarios en escritorio y en móvil; levanta backend y frontend
+npm run e2e               # 7 escenarios en escritorio y en móvil; levanta backend y frontend
 ```
 
-Requiere el entorno del backend (`backend/.venv`) ya creado. Escenarios: flujo principal, filtros, detalle trazable, archivo con columna faltante, archivo no CSV y servidor no disponible.
+Requiere el entorno del backend (`backend/.venv`) ya creado. Escenarios: flujo principal, filtros, detalle trazable, archivo con columna faltante, archivo no CSV, Excel renombrado como CSV y servidor no disponible.
 
 La integración continua ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) ejecuta todo lo anterior en cada *push* a `main`.
 
@@ -197,6 +197,7 @@ Lo verifican `backend/tests/test_muestra_real.py`, la colección de Postman y la
 - Contabilidad es una representación simplificada (débito = crédito por línea); el valor contabilizado es la suma de débitos del `id_factura`.
 - Las tarifas se aceptan como `0.19`, `19` o `19%`; los estados válidos son `Contabilizada`/`Contabilizado`.
 - Se aceptan CSV en UTF-8 (con o sin BOM) o Windows-1252, separados por `,` o `;`, con punto decimal, de hasta 5 MB.
+- Se rechazan con un mensaje que explica cómo corregirlos: libros de Excel o PDF renombrados como `.csv`, archivos en UTF-16 ("Texto Unicode" de Excel), archivos con caracteres nulos (dañados) y CSV con comillas sin cerrar (se indica la línea). Ver `data/casos-borde/`.
 - El resultado 50 / 32 / 18 es el de esta solución; la empresa no entregó un resultado oficial.
 
 ## Decisiones técnicas
