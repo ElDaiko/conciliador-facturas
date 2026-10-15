@@ -4,7 +4,7 @@ Cada regla es una función pura: recibe datos del dominio y devuelve los hallazg
 que encuentra. Así se pueden probar de forma aislada y su resultado es trazable.
 """
 
-from collections.abc import Sequence
+from dataclasses import dataclass, field
 from datetime import date
 from decimal import Decimal
 
@@ -95,7 +95,7 @@ def validar_total(factura: Factura, total: Decimal | None) -> list[Hallazgo]:
     ]
 
 
-def validar_duplicado(factura: Factura, filas_mismo_id: Sequence[int]) -> list[Hallazgo]:
+def validar_duplicado(factura: Factura, filas_mismo_id: list[int]) -> list[Hallazgo]:
     """Regla 3: id_factura es la llave del cruce, por lo que debe ser único."""
     if len(filas_mismo_id) < 2:
         return []
@@ -108,46 +108,46 @@ def validar_duplicado(factura: Factura, filas_mismo_id: Sequence[int]) -> list[H
     ]
 
 
-def validar_contabilidad(
-    factura: Factura, registros: Sequence[RegistroContable]
-) -> tuple[list[Hallazgo], list[Hallazgo], Decimal | None]:
-    """Regla 3 y estados de contabilización.
+@dataclass
+class ResultadoContable:
+    """Lo que encuentra la validación contable de una factura."""
 
-    Devuelve (inconsistencias, advertencias, valor contabilizado).
-    """
+    inconsistencias: list[Hallazgo] = field(default_factory=list)
+    advertencias: list[Hallazgo] = field(default_factory=list)
+    valor_contabilizado: Decimal | None = None
+
+
+def validar_contabilidad(factura: Factura, registros: list[RegistroContable]) -> ResultadoContable:
+    """Regla 3 (facturas sin registro contable) y estado/valores de la contabilización."""
+    resultado = ResultadoContable()
+
     if not registros:
-        return (
-            [
-                Hallazgo(
-                    CodigoCausa.SIN_CONTABILIZAR,
-                    f"No existe registro contable para {factura.id_factura}.",
-                )
-            ],
-            [],
-            None,
+        resultado.inconsistencias.append(
+            Hallazgo(
+                CodigoCausa.SIN_CONTABILIZAR,
+                f"No existe registro contable para {factura.id_factura}.",
+            )
         )
-
-    inconsistencias: list[Hallazgo] = []
-    advertencias: list[Hallazgo] = []
+        return resultado
 
     for r in registros:
-        problemas = [*(f"{c} vacío" for c in r.campos_vacios), *r.campos_invalidos]
+        problemas = [f"{campo} vacío" for campo in r.campos_vacios] + list(r.campos_invalidos)
         if problemas:
-            inconsistencias.append(
+            resultado.inconsistencias.append(
                 Hallazgo(
                     CodigoCausa.REGISTRO_CONTABLE_INCOMPLETO,
                     f"Registro contable de la fila {r.fila} con problemas: {', '.join(problemas)}.",
                 )
             )
         if r.estado and r.estado.lower() not in ESTADOS_CONTABILIZADOS:
-            inconsistencias.append(
+            resultado.inconsistencias.append(
                 Hallazgo(
                     CodigoCausa.ESTADO_NO_CONTABILIZADO,
                     f"Registro contable en estado '{r.estado}' (fila {r.fila}).",
                 )
             )
         if r.valor_debito == 0 and r.valor_credito == 0:
-            advertencias.append(
+            resultado.advertencias.append(
                 Hallazgo(
                     CodigoCausa.LINEA_CONTABLE_EN_CERO,
                     f"Línea contable sin valor (fila {r.fila}, cuenta {r.cuenta_contable}, "
@@ -157,9 +157,10 @@ def validar_contabilidad(
 
     debitos = _sumar([r.valor_debito for r in registros])
     creditos = _sumar([r.valor_credito for r in registros])
+    resultado.valor_contabilizado = debitos
 
     if difiere(debitos, factura.total_factura):
-        inconsistencias.append(
+        resultado.inconsistencias.append(
             Hallazgo(
                 CodigoCausa.VALOR_CONTABLE_DIFERENTE,
                 f"Valor contabilizado {pesos(debitos)}; total de la factura "
@@ -169,7 +170,7 @@ def validar_contabilidad(
             )
         )
     if difiere(debitos, creditos):
-        inconsistencias.append(
+        resultado.inconsistencias.append(
             Hallazgo(
                 CodigoCausa.PARTIDA_DESCUADRADA,
                 f"Débitos {pesos(debitos)} y créditos {pesos(creditos)} no son iguales.",
@@ -178,12 +179,13 @@ def validar_contabilidad(
             )
         )
 
+    # Fechas distintas de contabilización (sin repetir) para no duplicar advertencias.
     fechas = sorted({r.fecha_contabilizacion for r in registros if r.fecha_contabilizacion})
-    advertencias.extend(_validar_fechas(factura.fecha_factura, fechas))
-    return inconsistencias, advertencias, debitos
+    resultado.advertencias += _validar_fechas(factura.fecha_factura, fechas)
+    return resultado
 
 
-def _validar_fechas(fecha_factura: date | None, fechas_contables: Sequence[date]) -> list[Hallazgo]:
+def _validar_fechas(fecha_factura: date | None, fechas_contables: list[date]) -> list[Hallazgo]:
     if fecha_factura is None:
         return []
     hallazgos = []
@@ -207,28 +209,35 @@ def _validar_fechas(fecha_factura: date | None, fechas_contables: Sequence[date]
     return hallazgos
 
 
-def _sumar(valores: Sequence[Decimal | None]) -> Decimal | None:
+def _sumar(valores: list[Decimal | None]) -> Decimal | None:
     """Suma solo si todos los valores existen; un valor faltante hace el total desconocido."""
-    if any(v is None for v in valores):
+    if None in valores:
         return None
-    return sum(valores, Decimal(0))
+    total = Decimal(0)
+    for valor in valores:
+        total += valor
+    return total
 
 
 def pesos(valor: Decimal | None) -> str:
-    """Formato colombiano: $1.234.567 (decimales solo si existen)."""
+    """Formato colombiano: $1.234.567 (decimales solo si existen). Ej.: 1500.5 -> $1.500,50"""
     if valor is None:
         return "N/D"
     redondeado = valor.quantize(Decimal("0.01"))
-    entero, _, decimales = f"{abs(redondeado):,.2f}".partition(".")
-    texto = entero.replace(",", ".")
+    # Python formatea en estilo inglés (1,234,567.89); se intercambian los separadores.
+    ingles = f"{abs(redondeado):,.2f}"
+    entero, decimales = ingles.split(".")
+    texto = "$" + entero.replace(",", ".")
     if decimales != "00":
-        texto += f",{decimales}"
-    return f"{'-' if redondeado < 0 else ''}${texto}"
+        texto += "," + decimales
+    if redondeado < 0:
+        texto = "-" + texto
+    return texto
 
 
 def porcentaje(tarifa: Decimal | None) -> str:
+    """Convierte la fracción en porcentaje legible. Ej.: 0.025 -> 2,5%"""
     if tarifa is None:
         return "N/D"
-    valor = (tarifa * 100).normalize()
-    texto = f"{valor:f}".replace(".", ",")
-    return f"{texto}%"
+    valor = (tarifa * 100).normalize()  # normalize() quita ceros sobrantes: 19.00 -> 19
+    return f"{valor:f}".replace(".", ",") + "%"

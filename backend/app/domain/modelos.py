@@ -4,8 +4,7 @@ Los montos se manejan con Decimal para evitar errores de redondeo binario:
 con float, 11 de las 50 facturas de la muestra fallan una comparación exacta.
 """
 
-from collections.abc import Mapping
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal, InvalidOperation
 
@@ -43,13 +42,17 @@ class RegistroContable:
     campos_invalidos: tuple[str, ...] = ()
 
 
-@dataclass
 class _Conversor:
-    """Convierte textos a tipos del dominio y acumula los campos con problemas."""
+    """Convierte los textos de una fila a tipos del dominio.
 
-    valores: Mapping[str, str]
-    vacios: list[str] = field(default_factory=list)
-    invalidos: list[str] = field(default_factory=list)
+    Mientras convierte, va anotando qué campos venían vacíos o con formato inválido.
+    Un valor que no se puede convertir queda como None.
+    """
+
+    def __init__(self, valores: dict[str, str]) -> None:
+        self.valores = valores
+        self.vacios: list[str] = []
+        self.invalidos: list[str] = []
 
     def texto(self, campo: str) -> str:
         valor = self.valores.get(campo, "")
@@ -95,7 +98,7 @@ class _Conversor:
             return None
 
 
-def factura_desde_fila(numero: int, valores: Mapping[str, str]) -> Factura:
+def factura_desde_fila(numero: int, valores: dict[str, str]) -> Factura:
     c = _Conversor(valores)
     return Factura(
         fila=numero,
@@ -114,7 +117,7 @@ def factura_desde_fila(numero: int, valores: Mapping[str, str]) -> Factura:
     )
 
 
-def registro_desde_fila(numero: int, valores: Mapping[str, str]) -> RegistroContable:
+def registro_desde_fila(numero: int, valores: dict[str, str]) -> RegistroContable:
     c = _Conversor(valores)
     return RegistroContable(
         fila=numero,

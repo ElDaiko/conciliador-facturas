@@ -31,7 +31,7 @@ def test_factura_correcta():
     r = evaluar([FACTURA_OK], [CONTABLE_OK])
     d = r.detalle[0]
     assert d.estado is EstadoFactura.CORRECTA
-    assert d.causas == ()
+    assert d.causas == []
     assert d.calculos.iva_esperado == Decimal("190000")
     assert d.calculos.retencion_esperada == Decimal("40000")
     assert d.calculos.total_esperado == Decimal("1150000")

@@ -6,7 +6,6 @@ valida la estructura mínima. No interpreta valores: eso le corresponde al domin
 
 import csv
 import io
-from collections.abc import Sequence
 from dataclasses import dataclass
 
 from app.core.errores import ArchivoInvalidoError
@@ -22,7 +21,9 @@ class FilaCsv:
     valores: dict[str, str]
 
 
-def leer_csv(contenido: bytes, nombre: str, columnas_obligatorias: Sequence[str]) -> list[FilaCsv]:
+def leer_csv(
+    contenido: bytes, nombre: str, columnas_obligatorias: tuple[str, ...]
+) -> list[FilaCsv]:
     if not contenido.strip():
         raise ArchivoInvalidoError(
             f"El archivo '{nombre}' está vacío.", codigo="ARCHIVO_VACIO", archivo=nombre
@@ -52,11 +53,12 @@ def leer_csv(contenido: bytes, nombre: str, columnas_obligatorias: Sequence[str]
         for valores in lector:
             if not any(v.strip() for v in valores):
                 continue  # Líneas en blanco al final del archivo.
-            fila = {
-                col: (valores[i].strip() if i < len(valores) else "")
-                for i, col in enumerate(columnas)
-                if col in columnas_obligatorias
-            }
+            fila: dict[str, str] = {}
+            for posicion, columna in enumerate(columnas):
+                if columna not in columnas_obligatorias:
+                    continue  # Las columnas adicionales se ignoran.
+                # Si la fila trae menos valores que el encabezado, lo faltante queda vacío.
+                fila[columna] = valores[posicion].strip() if posicion < len(valores) else ""
             filas.append(FilaCsv(numero=lector.line_num, valores=fila))
     except csv.Error as exc:
         raise ArchivoInvalidoError(

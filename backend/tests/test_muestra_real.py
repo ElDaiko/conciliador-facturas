@@ -33,7 +33,7 @@ def test_resumen_general(resultado_muestra):
     assert (r.total_registros, r.correctas, r.con_inconsistencia) == (50, 32, 18)
     assert r.facturas_unicas == 48
     assert r.registros_contables == 50
-    assert resultado_muestra.registros_contables_sin_factura == ()
+    assert resultado_muestra.registros_contables_sin_factura == []
 
 
 def test_cada_factura_tiene_las_causas_esperadas(resultado_muestra):

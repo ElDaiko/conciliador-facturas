@@ -12,5 +12,7 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
+# Se prefiere if/else explícito sobre el operador ternario por legibilidad.
+ignore = ["SIM108"]
 # Los mensajes de negocio usan × y − tipográficos de forma intencional.
 allowed-confusables = ["×", "−"]
