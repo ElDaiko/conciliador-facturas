@@ -2,6 +2,12 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y [SemVer](https://semver.org/lang/es/).
 
+## [1.3.0] - 2026-10-15
+
+### Changed
+- Identidad visual más cercana al sitio de referencia, sin cambios funcionales: amarillo `#FDDA24`, carbón `#2C2A29`, fondo `#F7F7F7`, tipografía Open Sans, encabezado con barra superior carbón, botones tipo píldora (amarillo y carbón), tarjetas con esquinas casi rectas y sombra suave, titulares más grandes y pie color carbón. Contraste WCAG AA verificado.
+- Presentación con la nueva paleta y una captura actualizada del prototipo.
+
 ## [1.2.1] - 2026-10-15
 
 ### Changed
