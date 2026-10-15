@@ -30,7 +30,7 @@ Prototipo web que cruza el archivo de **facturas de proveedores** con el de **re
 | Tecnología | Versión | Uso |
 |---|---|---|
 | Angular | 22.2 | Componentes standalone, signals, sin `zone.js` |
-| SCSS · Nunito Sans (npm) | — · 5.3 | Estilos propios con tokens; tipografía sin CDN |
+| SCSS · Open Sans (npm) | — · 5.3 | Estilos propios con tokens; tipografía libre sin CDN |
 | Vitest · Playwright · ESLint · Prettier | 4.1 · 1.64 · 10 · 3.9 | Pruebas unitarias, E2E, lint y formato (solo desarrollo) |
 
 ### Herramientas

@@ -33,10 +33,11 @@
               }
             ],
             "styles": [
-              "@fontsource/nunito-sans/latin-400.css",
-              "@fontsource/nunito-sans/latin-600.css",
-              "@fontsource/nunito-sans/latin-700.css",
-              "@fontsource/nunito-sans/latin-800.css",
+              "@fontsource/open-sans/latin-300.css",
+              "@fontsource/open-sans/latin-400.css",
+              "@fontsource/open-sans/latin-600.css",
+              "@fontsource/open-sans/latin-700.css",
+              "@fontsource/open-sans/latin-800.css",
               "src/styles.scss"
             ],
             "stylePreprocessorOptions": {

@@ -7,7 +7,7 @@
   padding: var(--espacio-2) var(--espacio-5);
   border: 2px solid transparent;
   border-radius: var(--radio-pildora);
-  font-weight: var(--peso-negrita);
+  font-weight: var(--peso-semi);
   font-size: var(--texto-md);
   line-height: 1.2;
   text-align: center;
@@ -21,7 +21,7 @@
   width: 100%;
 }
 
-// Amarillo solo como fondo, con texto oscuro (11.3:1).
+// Amarillo solo como fondo, con texto carbón (10.4:1).
 :host(.boton--primario) {
   background: var(--color-marca);
   color: var(--color-sobre-marca);
@@ -31,13 +31,13 @@
   }
 }
 
+// Carbón con texto blanco (14.3:1), como los botones oscuros del sitio de referencia.
 :host(.boton--secundario) {
-  background: var(--color-fondo);
-  border-color: var(--color-borde-control);
-  color: var(--color-texto);
+  background: var(--color-carbon);
+  color: var(--color-sobre-carbon);
 
   &:hover:not(:disabled) {
-    background: var(--color-fondo-alterno);
+    background: var(--color-carbon-hover);
   }
 }
 
