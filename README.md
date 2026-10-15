@@ -3,6 +3,8 @@
 Prototipo web que cruza el archivo de **facturas de proveedores** con el de **registros contables**, aplica reglas contables y tributarias básicas y presenta un resumen y un detalle de las facturas correctas y de las que tienen inconsistencias, con la causa de cada una.
 
 > Prueba técnica — Analista III, Gerencia de Evolución Contable y Tributaria.
+>
+> Prototipo con identidad visual inspirada en Bancolombia; no es un producto oficial.
 
 ## Contenido
 
@@ -10,6 +12,8 @@ Prototipo web que cruza el archivo de **facturas de proveedores** con el de **re
 - [Estructura del repositorio](#estructura-del-repositorio)
 - [Ejecución del backend](#ejecución-del-backend)
 - [API](#api)
+- [Ejecución del frontend](#ejecución-del-frontend)
+- [Diseño y accesibilidad](#diseño-y-accesibilidad)
 - [Reglas de negocio](#reglas-de-negocio)
 - [Resultado esperado con los archivos de prueba](#resultado-esperado-con-los-archivos-de-prueba)
 - [Supuestos](#supuestos)
@@ -21,6 +25,7 @@ Prototipo web que cruza el archivo de **facturas de proveedores** con el de **re
 | Python | 3.14.7 | 3.12 |
 | Node.js | 24.19.0 | 22 LTS |
 | npm | 11.17.0 | 10 |
+| Angular CLI | 22.2 (incluida en `devDependencies`, no requiere instalación global) | — |
 | Git | 2.50 | — |
 
 No se requiere base de datos, credenciales ni acceso a sistemas corporativos. Todos los datos son ficticios.
@@ -178,6 +183,55 @@ Los datos inválidos en **filas individuales** (montos en letras, fechas mal esc
 - Límite de 5 MB por archivo y validación de extensión y estructura.
 - Cabeceras `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`; en `/api/*` también `Cache-Control: no-store` (información financiera) y `Content-Security-Policy`.
 - El log registra solo conteos, nunca datos de facturas o proveedores. Los errores inesperados no exponen trazas al cliente.
+
+## Ejecución del frontend
+
+Desde la raíz del repositorio, en otra terminal (con el backend corriendo en el puerto 8000):
+
+```bash
+cd frontend
+npm ci          # instala las versiones exactas de package-lock.json
+npm start       # http://localhost:4200
+```
+
+`npm start` usa `proxy.conf.json`: las llamadas a `/api` se reenvían a `http://localhost:8000`, así el navegador ve un solo origen y la API no necesita habilitar CORS.
+
+Pruebas, lint y build:
+
+```bash
+cd frontend
+npm test              # pruebas unitarias (Vitest)
+npm run lint          # ESLint con reglas de accesibilidad de plantillas
+npm run format:check  # formato (Prettier)
+npm run build         # build de producción en dist/
+```
+
+### Dependencias del frontend
+
+| Paquete | Versión | Uso |
+|---|---|---|
+| Angular | 22.2 | Framework (componentes standalone, signals, sin zone.js) |
+| @fontsource/nunito-sans | 5.3 | Tipografía libre instalada por npm (sin CDN: el build funciona sin conexión) |
+| Vitest + jsdom | 4.1 / 28 | Pruebas unitarias (solo desarrollo) |
+| angular-eslint | 22.6 | Lint de TypeScript y plantillas (solo desarrollo) |
+| Prettier | 3.9 | Formato (solo desarrollo) |
+
+No se usa una librería de componentes: los estilos son SCSS propio con tokens de diseño.
+
+## Diseño y accesibilidad
+
+**Identidad visual** (inspirada, no oficial): amarillo como acento, gris carbón para texto y encabezados, fondos blancos y grises claros, bordes redondeados y espacio generoso. Sin logo ni tipografía propietaria. Los tokens están en `frontend/src/styles/_tokens.scss`.
+
+**Mobile first:** los estilos base son para pantallas pequeñas y se amplían desde 640 px y 1024 px. Verificado en 320 px, 375 px y escritorio.
+
+**Accesibilidad (objetivo WCAG 2.2 AA):**
+
+- **Contraste verificado** en todos los pares de colores (texto ≥ 4,5:1, bordes de controles ≥ 3:1). El amarillo solo se usa como fondo con texto oscuro (11,3:1); nunca como texto sobre blanco (1,46:1).
+- **El estado nunca se comunica solo con color:** verde + ícono + "Correcta", rojo + ícono + "Con inconsistencia", naranja + ícono para advertencias. La advertencia es naranja, no ámbar, para no confundirse con el amarillo de marca.
+- **Teclado:** enlace "Saltar al contenido", foco visible en todos los controles (contorno oscuro con separación blanca, visible sobre blanco y sobre amarillo) y foco devuelto al campo al quitar un archivo.
+- **Lectores de pantalla:** `lang="es"`, regiones `header`/`main`/`footer`, un solo `h1`, campos de archivo nativos con etiqueta y descripción asociadas, `aria-invalid` en errores, errores anunciados con `role="alert"` y estados de carga con `role="status"`. Los íconos son decorativos (`aria-hidden`) porque siempre van con texto.
+- **Objetivos táctiles** de al menos 44 × 44 px, tamaños en `rem` (respeta el tamaño de letra del usuario), cifras con `tabular-nums`, soporte de `prefers-reduced-motion` y de modo de alto contraste (`forced-colors`).
+- **Validación automática:** ESLint con `templateAccessibility` de angular-eslint y pruebas unitarias que verifican roles, etiquetas y textos de estado.
 
 ## Reglas de negocio
 
