@@ -185,15 +185,24 @@ Se mantiene `ESTADO_NO_CONTABILIZADO` como inconsistencia porque una factura cuy
 
 ## Decisiones técnicas
 
-Registradas como ADR (*Architecture Decision Records*) en [`docs/adr/`](docs/adr/):
-
-| ADR | Decisión |
-|---|---|
-| [0001](docs/adr/0001-monorepo-y-trunk-based.md) | Monorepo y desarrollo trunk-based con Conventional Commits |
-| [0002](docs/adr/0002-backend-fastapi-sin-persistencia.md) | FastAPI con capas `infra`/`domain`/`api`, sin capa de aplicación ni base de datos |
-| [0003](docs/adr/0003-decimal-y-tolerancia.md) | Montos con `Decimal`, tolerancia de ±$1 y montos como texto en el JSON |
-| [0004](docs/adr/0004-interpretacion-de-reglas.md) | Interpretación de las reglas ambiguas del enunciado |
-| [0005](docs/adr/0005-frontend-signals-sin-libreria-ui.md) | Angular con signals, SCSS propio sin librería de componentes y proxy sin CORS |
+| Decisión | Por qué | Alternativa descartada |
+|---|---|---|
+| **Monorepo** con `backend/`, `frontend/`, `data/` y `docs/` | Un solo `git clone` y un solo README para instalar y ejecutar todo | Dos repositorios: obligan a coordinar versiones de dos proyectos |
+| **Trunk-based** sobre `main` con Conventional Commits y etiquetas de versión | Un solo desarrollador y una entrega única; el historial explica cada cambio | GitFlow: aporta control con varios equipos y versiones en paralelo; aquí agrega ceremonia sin beneficio |
+| **FastAPI** | Valida la entrada, genera Swagger (`/docs`) y los modelos de Pydantic son el contrato con el frontend | Flask: requiere validación y documentación manuales |
+| Backend en tres capas: **`infra`** (lectura del CSV), **`domain`** (reglas como funciones puras) y **`api`** (HTTP) | Las reglas se prueban sin servidor (47 de las 60 pruebas) y no dependen de cómo llegan los datos | Arquitectura hexagonal con casos de uso y repositorios: para un único caso de uso, más archivos que lógica |
+| **Sin base de datos**: cada solicitud se procesa en memoria | La prueba no pide histórico; no se retienen datos financieros | Persistir resultados: queda como siguiente paso |
+| Librería estándar **`csv`** | Suficiente para 40–60 registros, sin dependencias pesadas | pandas: potente, pero innecesario para este volumen |
+| Montos con **`Decimal`** | Con `float`, 11 de las 50 facturas fallan una comparación exacta; con `Decimal`, solo las 2 que de verdad tienen el IVA mal | `float` con redondeo: oculta errores en lugar de evitarlos |
+| **Tolerancia de ±$1** (`core/config.py`) | Absorbe redondeos al peso sin ocultar la menor diferencia real de la muestra ($1.500) | Tolerancia porcentual: 0,1 % ocultaría esa diferencia |
+| Montos como **texto** en el JSON | Los números de JSON son de punto flotante; el frontend los convierte solo para mostrarlos | Números en el JSON: posible pérdida de precisión |
+| Errores con una **forma única** `{codigo, mensaje, archivo}` en español | El frontend muestra el mensaje tal cual y el usuario sabe qué corregir | Errores por defecto de FastAPI: en inglés y con estructura distinta por caso |
+| Interpretación de las reglas ambiguas | Ver [Supuestos](#supuestos) y el efecto de cada interpretación en [Resultado](#resultado-con-los-archivos-de-prueba) | — |
+| **Angular 22** standalone, *zoneless*, `OnPush` y signals | Lo actual del framework; menos código y mejor rendimiento | Módulos y `zone.js`: enfoque anterior |
+| **Store con signals** provisto en la página, componentes de contenedor y de presentación | Un solo flujo lineal; los filtros son `computed()` sin sincronización manual | NgRx: multiplicaría el código para una pantalla |
+| **SCSS propio con tokens** y tipografía instalada por npm | Control del contraste (WCAG 2.2 AA) y del aspecto; el build no depende de internet | Angular Material: peso y aspecto difíciles de adaptar para una pantalla |
+| **Proxy** de desarrollo para `/api` (y nginx en Docker) | El navegador ve un solo origen, como en un despliegue real detrás de un dominio | Habilitar CORS en la API: la abre a otros orígenes |
+| **Docker y CI opcionales** | Comodidad adicional; la ejecución oficial (`pip` + `npm`) no requiere instalar nada más | Docker como única vía: exigiría al evaluador tenerlo instalado |
 
 ## Funcionalidades no incluidas
 
@@ -219,7 +228,7 @@ Se usó IA generativa. El detalle de en qué partes y con qué propósito está 
 ├── backend/     API REST en Python (FastAPI)
 ├── frontend/    Aplicación web en Angular
 ├── data/        Archivos CSV de prueba (casos-borde/ para probar errores)
-├── docs/        Decisiones (ADR), declaración de IA y presentación
+├── docs/        Declaración de IA y presentación
 ├── .github/     Integración continua (GitHub Actions)
 └── docker-compose.yml   Ejecución opcional con Docker
 ```
@@ -508,5 +517,5 @@ Python 3.12 es la versión mínima declarada; 3.14 es la de desarrollo. Los paso
 ## Control de versiones
 
 - Desarrollo **trunk-based** sobre `main` con commits pequeños según [Conventional Commits](https://www.conventionalcommits.org/es/v1.0.0/) (`feat`, `fix`, `test`, `docs`, `refactor`, `build`, `chore`).
-- Versiones etiquetadas: **`v1.0.0`** (entrega base) y **`v1.1.0`** (Docker y CI opcionales); los cambios están en [`CHANGELOG.md`](CHANGELOG.md).
-- Se eligió trunk-based en lugar de GitFlow porque es un proyecto de un solo desarrollador y la prueba no exige un flujo de ramas (ver [ADR 0001](docs/adr/0001-monorepo-y-trunk-based.md)).
+- Versiones etiquetadas: **`v1.0.0`** (entrega base), **`v1.1.0`** (Docker y CI opcionales) y **`v1.1.1`** (decisiones técnicas en el README, versión para entregar); los cambios están en [`CHANGELOG.md`](CHANGELOG.md).
+- Se eligió trunk-based en lugar de GitFlow porque es un proyecto de un solo desarrollador y la prueba no exige un flujo de ramas (ver [Decisiones técnicas](#decisiones-técnicas)).
