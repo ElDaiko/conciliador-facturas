@@ -1,0 +1,92 @@
+@use 'mixins' as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--fuente-base);
+  font-size: var(--texto-md);
+  line-height: var(--interlineado);
+  color: var(--color-texto);
+  background: var(--color-fondo-alterno);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  line-height: 1.25;
+  font-weight: var(--peso-extra);
+}
+
+p {
+  margin: 0;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+// Foco visible solo con teclado; nunca se elimina sin reemplazo.
+:focus-visible {
+  @include foco-visible;
+}
+
+// Cifras alineadas en tablas y tarjetas.
+.cifra {
+  font-variant-numeric: tabular-nums;
+}
+
+.solo-lector {
+  @include solo-lector;
+}
+
+// Enlace "Saltar al contenido": visible solo al recibir foco con teclado.
+.saltar-contenido {
+  position: absolute;
+  top: var(--espacio-2);
+  left: var(--espacio-2);
+  z-index: 10;
+  padding: var(--espacio-3) var(--espacio-4);
+  border-radius: var(--radio-sm);
+  background: var(--color-texto);
+  color: var(--color-fondo);
+  font-weight: var(--peso-negrita);
+  text-decoration: none;
+  transform: translateY(-200%);
+
+  &:focus {
+    transform: none;
+  }
+}
+
+// Respeta a quienes configuran su sistema para reducir el movimiento.
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

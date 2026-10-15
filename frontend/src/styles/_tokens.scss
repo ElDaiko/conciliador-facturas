@@ -1,0 +1,71 @@
+// Tokens de diseño: identidad visual inspirada en Bancolombia (no oficial).
+// Contrastes verificados contra WCAG 2.2 AA (texto >= 4.5:1, componentes >= 3:1).
+// Regla: el amarillo de marca solo se usa como FONDO con texto oscuro (11.3:1).
+// Sobre blanco, el amarillo da 1.46:1: nunca se usa como color de texto o ícono.
+
+:root {
+  // Marca
+  --color-marca: #ffd100;
+  --color-marca-hover: #f2c200;
+  --color-sobre-marca: #1f1f1f;
+
+  // Texto
+  --color-texto: #1f1f1f; // 16.5:1 sobre blanco
+  --color-texto-secundario: #4a4a4a; // 8.9:1 sobre blanco
+  --color-texto-tenue: #616161; // 5.6:1 sobre --color-fondo-alterno
+
+  // Superficies y bordes
+  --color-fondo: #ffffff;
+  --color-fondo-alterno: #f4f4f4;
+  --color-borde: #e0e0e0; // decorativo (separadores)
+  --color-borde-control: #767676; // 4.5:1: bordes de campos y botones secundarios
+
+  // Estados: siempre acompañados de ícono o texto, nunca solo color.
+  // La advertencia es naranja (no ámbar) para no confundirse con el amarillo de marca.
+  --color-exito: #1b6e33;
+  --color-exito-fondo: #e7f4ea;
+  --color-peligro: #b3261e;
+  --color-peligro-fondo: #fcebea;
+  --color-advertencia: #a84300;
+  --color-advertencia-fondo: #fff0e3;
+  --color-info: #1d5fa8;
+  --color-info-fondo: #e8f1fb;
+
+  // Foco visible: contorno oscuro con separación blanca, visible sobre blanco y sobre amarillo.
+  --foco-anillo: 0 0 0 2px var(--color-fondo), 0 0 0 4px var(--color-texto);
+
+  // Tipografía (rem para respetar el tamaño de letra que elija el usuario)
+  --fuente-base: 'Nunito Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --texto-xs: 0.8125rem;
+  --texto-sm: 0.875rem;
+  --texto-md: 1rem;
+  --texto-lg: 1.125rem;
+  --texto-xl: 1.375rem;
+  --texto-2xl: 1.75rem;
+  --peso-normal: 400;
+  --peso-semi: 600;
+  --peso-negrita: 700;
+  --peso-extra: 800;
+  --interlineado: 1.5;
+
+  // Espaciado (escala de 4 px)
+  --espacio-1: 0.25rem;
+  --espacio-2: 0.5rem;
+  --espacio-3: 0.75rem;
+  --espacio-4: 1rem;
+  --espacio-5: 1.5rem;
+  --espacio-6: 2rem;
+  --espacio-7: 3rem;
+
+  // Forma
+  --radio-sm: 0.375rem;
+  --radio-md: 0.75rem;
+  --radio-lg: 1rem;
+  --radio-pildora: 999px;
+  --sombra-suave: 0 1px 2px rgb(0 0 0 / 6%), 0 2px 8px rgb(0 0 0 / 6%);
+
+  // Interacción
+  --objetivo-tactil: 2.75rem; // 44 px: tamaño mínimo de objetivos táctiles
+  --ancho-contenido: 72rem;
+  --transicion: 150ms ease-out;
+}
