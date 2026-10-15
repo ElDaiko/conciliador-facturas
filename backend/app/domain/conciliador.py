@@ -207,11 +207,20 @@ def _resumir(
 
 
 def _ordenar_conteo(cantidad_por_codigo: dict[CodigoCausa, int]) -> list[ConteoCausa]:
-    """Ordena de mayor a menor cantidad; en empate, según el orden del catálogo."""
+    """Primero las inconsistencias y luego las advertencias.
+
+    Dentro de cada grupo, de mayor a menor cantidad; en empate, según el orden del catálogo.
+    """
     orden_catalogo = list(CATALOGO)
     conteo = [
         ConteoCausa(codigo, CATALOGO[codigo][0], CATALOGO[codigo][1], cantidad)
         for codigo, cantidad in cantidad_por_codigo.items()
     ]
-    conteo.sort(key=lambda c: (-c.cantidad, orden_catalogo.index(c.codigo)))
+    conteo.sort(
+        key=lambda c: (
+            c.tipo == TipoHallazgo.ADVERTENCIA,  # False (inconsistencia) va antes que True
+            -c.cantidad,
+            orden_catalogo.index(c.codigo),
+        )
+    )
     return conteo
