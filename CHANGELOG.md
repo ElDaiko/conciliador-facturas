@@ -2,6 +2,11 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y [SemVer](https://semver.org/lang/es/).
 
+## [1.4.1] - 2026-10-15
+
+### Fixed
+- Presentación, diapositiva 4: el gráfico de inconsistencias por causa mostraba números en lugar del nombre de cada causa en algunos visores. Ahora las barras se dibujan con formas y texto, legibles en cualquier programa.
+
 ## [1.4.0] - 2026-10-15
 
 ### Added
